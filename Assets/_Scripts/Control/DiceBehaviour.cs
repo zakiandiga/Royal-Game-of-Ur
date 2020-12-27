@@ -9,6 +9,7 @@ public class DiceBehaviour : MonoBehaviour
     private XRGrabInteractable grabControl;
     private Rigidbody rb;
     [SerializeField] private Transform spawner;
+    private float diceFallTreshold = 0.5f;
 
     #region DicetypeIdentifier
     [SerializeField] private DiceType diceType = DiceType.Unassigned;
@@ -27,9 +28,9 @@ public class DiceBehaviour : MonoBehaviour
     #endregion
 
     #region DiceState
-    private bool interactable = true; //modified from observer
+    [SerializeField] private bool interactable; //modify from observer
 
-    private DiceState diceState = DiceState.Idle;
+    [SerializeField] private DiceState diceState = DiceState.Idle;
     public enum DiceState
     {
         Idle,
@@ -46,9 +47,8 @@ public class DiceBehaviour : MonoBehaviour
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();        
         grabControl = GetComponent<XRGrabInteractable>();
-        grabControl.enabled = false;
     }    
 
     private void OnEnable()
@@ -71,13 +71,20 @@ public class DiceBehaviour : MonoBehaviour
     private void InteractableOn(PhaseManager phase)
     {
         if(!interactable)
+        {
             interactable = true;
+        }
+            
     }
 
     private void InteractableOff(PhaseManager phase) //is this redundant with DiceCheck()?
     {
         if(interactable)
+        {
             interactable = false;
+        }
+            
+
     }
     #endregion
 
@@ -101,23 +108,16 @@ public class DiceBehaviour : MonoBehaviour
             if (diceState == DiceState.Grabable)
             {
                 diceState = DiceState.Idle;
-                grabControl.enabled = false;
+                //grabControl.enabled = false;
                 Debug.Log(this.gameObject.name + " is NOT GRABABLE");
             }
         }
     }
 
-    private void OnCollisionEnter(Collision collision)  //Out of altar throw handler
-    {
-        if (collision.collider.tag != "altar")
-        {
-            transform.position = spawner.position;
-        }
-    }
 
     private void DiceGrab(HandPresence hand) //On dice grabbed
     {
-        if(diceState == DiceState.Grabable)
+        if(diceState == DiceState.Grabable && interactable)
         {
             diceState = DiceState.OnHand;
             Debug.Log(this.gameObject.name + " ON HAND");
@@ -162,8 +162,8 @@ public class DiceBehaviour : MonoBehaviour
                 Debug.Log("Dice result error");
             }
 
+            this.interactable = false;
             Debug.Log(this.gameObject.name + " result is " + rollResult);
-            interactable = false;
             OnDiceNumberResult?.Invoke(rollResult);
         }
         else if (diceType == DiceType.Bool)
@@ -183,7 +183,7 @@ public class DiceBehaviour : MonoBehaviour
             }
 
             Debug.Log(this.gameObject.name + " result is " + rollResult);
-            interactable = false;
+            this.interactable = false;
             OnDiceBoolResult?.Invoke(rollResult);
         }
         else
@@ -197,6 +197,11 @@ public class DiceBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(transform.position.y <= diceFallTreshold) //Out of place handler
+        {
+            transform.position = spawner.position;
+        }
+
         switch (diceState)
         {
             case DiceState.Idle:

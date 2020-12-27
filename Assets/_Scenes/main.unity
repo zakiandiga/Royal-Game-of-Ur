@@ -20289,7 +20289,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &401220940
 MonoBehaviour:
@@ -20306,7 +20306,7 @@ MonoBehaviour:
   m_InteractionManager: {fileID: 0}
   m_InteractionLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2048
   m_AttachTransform: {fileID: 0}
   m_StartingSelectedInteractable: {fileID: 0}
   m_OnHoverEntered:
@@ -51727,7 +51727,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1011607508}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16b64ce9bdda1f14da0574001cd99943, type: 3}
   m_Name: 
@@ -71407,7 +71407,7 @@ SphereCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.2
+  m_Radius: 0.15
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1426069900
 MonoBehaviour:
@@ -71424,7 +71424,7 @@ MonoBehaviour:
   m_InteractionManager: {fileID: 0}
   m_InteractionLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2048
   m_AttachTransform: {fileID: 0}
   m_StartingSelectedInteractable: {fileID: 0}
   m_OnHoverEntered:
@@ -79655,6 +79655,50 @@ Transform:
   m_Father: {fileID: 174574607}
   m_RootOrder: 27
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1668341932
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1668341933}
+  - component: {fileID: 1668341934}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1668341933
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668341932}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1924492332}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1668341934
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1668341932}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.003
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1672780056
 GameObject:
   m_ObjectHideFlags: 0
@@ -98221,7 +98265,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1954776903}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2b93ee7feb45e44bab744a523a84c33, type: 3}
   m_Name: 
@@ -105816,11 +105860,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiceBool-Player
       objectReference: {fileID: 0}
+    - target: {fileID: 306500563720611329, guid: 95a629a533f9c3640985b95b8d329cf2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 306500564122121861, guid: 95a629a533f9c3640985b95b8d329cf2,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 306500564122121865, guid: 95a629a533f9c3640985b95b8d329cf2,
         type: 3}
       propertyPath: spawner
       value: 
       objectReference: {fileID: 245282752}
+    - target: {fileID: 306500564122121865, guid: 95a629a533f9c3640985b95b8d329cf2,
+        type: 3}
+      propertyPath: interactable
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95a629a533f9c3640985b95b8d329cf2, type: 3}
 --- !u!1001 &5321314370893252173
@@ -105830,11 +105889,46 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 174574607}
     m_Modifications:
+    - target: {fileID: 5321314372415809221, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_SmoothPosition
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372415809221, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372415809221, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_OnHoverEntered.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372415809221, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_OnHoverEntered.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372415809221, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_OnHoverEntered.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5321314372415809225, guid: 3f91e99611d9afc4899b0d3faed3c1be,
         type: 3}
       propertyPath: spawner
       value: 
       objectReference: {fileID: 1556676637}
+    - target: {fileID: 5321314372415809225, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: interactable
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372415809230, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5321314372750109281, guid: 3f91e99611d9afc4899b0d3faed3c1be,
         type: 3}
       propertyPath: m_RootOrder
@@ -105894,6 +105988,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Dice-Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 5321314372750210625, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: m_Layer
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f91e99611d9afc4899b0d3faed3c1be, type: 3}
