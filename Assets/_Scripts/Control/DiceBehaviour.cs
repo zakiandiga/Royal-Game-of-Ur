@@ -42,7 +42,7 @@ public class DiceBehaviour : MonoBehaviour
 
     #region ResultAnnouncerEvents
     public static event Action<int> OnDiceNumberResult;
-    public static event Action<int> OnDiceBoolResult;
+    public static event Action<int> OnDiceBoolResult;    
     #endregion
 
     private void Start()
@@ -53,7 +53,7 @@ public class DiceBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
-        HandPresence.OnEnterGrab += DiceGrab;
+        HandPresence.OnEnterGrip += DiceGrab;
         HandPresence.OnExitGrab += DiceThrow;
         PhaseManager.OnEnterDiceRoll += InteractableOn;
         PhaseManager.OnExitDiceRoll += InteractableOff;
@@ -62,7 +62,7 @@ public class DiceBehaviour : MonoBehaviour
     private void OnDisable()
     {
         HandPresence.OnExitGrab -= DiceThrow;
-        HandPresence.OnEnterGrab -= DiceGrab;
+        HandPresence.OnEnterGrip -= DiceGrab;
         PhaseManager.OnEnterDiceRoll -= InteractableOn;
         PhaseManager.OnExitDiceRoll -= InteractableOff;
     }
@@ -95,7 +95,7 @@ public class DiceBehaviour : MonoBehaviour
             if (diceState == DiceState.Idle)
             {
                 diceState = DiceState.Grabable;
-                grabControl.enabled = true;
+                grabControl.enabled = true; //not working this way
                 Debug.Log(this.gameObject.name + " is GRABABLE");
             }
         }

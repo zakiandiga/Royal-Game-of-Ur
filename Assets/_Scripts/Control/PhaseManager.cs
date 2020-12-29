@@ -54,6 +54,7 @@ public class PhaseManager : MonoBehaviour
     private void DiceNumberResultCheck(int result)
     {
         Debug.Log("Recieve dice number result from DiceBehaviour, value: " + result);
+        //Display on the UI?
         numberDiceThrown = true;
 
     }
@@ -61,6 +62,7 @@ public class PhaseManager : MonoBehaviour
     private void DiceBoolResultCheck(int result)
     {
         Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + result);
+        //Display on the UI?
         boolDiceThrown = true;
 
     }

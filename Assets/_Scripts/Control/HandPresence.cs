@@ -31,7 +31,7 @@ public class HandPresence : MonoBehaviour
     public enum HandState
     {
         IsPinching,
-        IsGrabbing,
+        IsGripping,
         Idle
     }
     #endregion
@@ -52,7 +52,7 @@ public class HandPresence : MonoBehaviour
     public static event Action<HandPresence> OnExitPinch;
     public static event Action<HandPresence> OnEnterPinch;
     public static event Action<HandPresence> OnExitGrab;
-    public static event Action<HandPresence> OnEnterGrab;
+    public static event Action<HandPresence> OnEnterGrip;
     #endregion
 
     // Start is called before the first frame update
@@ -93,7 +93,7 @@ public class HandPresence : MonoBehaviour
         ControllerDisplaySwitch();
     }
 
-    private void HandGestureSwitch() //Do we need this beyond testing?
+    private void HandGestureSwitch() //This function might not needed
     {
         switch (handState)
         {
@@ -101,7 +101,7 @@ public class HandPresence : MonoBehaviour
                 //Debug.Log("Announce, this hand is pinching");
                 //what else?
                 break;
-            case HandState.IsGrabbing:
+            case HandState.IsGripping:
                 //Debug.Log("Announce, this hand is grabbing");
                 //what else?
                 break;
@@ -155,7 +155,7 @@ public class HandPresence : MonoBehaviour
         {
             if(handState != HandState.Idle)
             {
-                if (handState == HandState.IsGrabbing) //Exit from grabbing announcer
+                if (handState == HandState.IsGripping) //Exit from grabbing announcer
                 {
                     OnExitGrab?.Invoke(this);
                     //Debug.Log(this.gameObject.name + " exits Grabbing");
@@ -173,7 +173,7 @@ public class HandPresence : MonoBehaviour
         {
             if(handState != HandState.IsPinching)
             {
-                if (handState == HandState.IsGrabbing) //Exit from grabbing
+                if (handState == HandState.IsGripping) //Exit from grabbing
                 {
                     OnExitGrab?.Invoke(this);
                     //Debug.Log(this.gameObject.name + " exits Grabbing");
@@ -186,15 +186,15 @@ public class HandPresence : MonoBehaviour
 
         else if(gripValue >= 0.9f)
         {
-            if(handState != HandState.IsGrabbing)
+            if(handState != HandState.IsGripping)
             {
                 if (handState == HandState.IsPinching) //Exit from pinching announcer
                 {
                     OnExitPinch?.Invoke(this);
                 }
-                handState = HandState.IsGrabbing;
+                handState = HandState.IsGripping;
                 HandGestureSwitch();
-                OnEnterGrab?.Invoke(this);  //Enter grab announcer
+                OnEnterGrip?.Invoke(this);  //Enter grab announcer
                 //Debug.Log(this.gameObject.name + " enter Grabbing");
             }
         }
