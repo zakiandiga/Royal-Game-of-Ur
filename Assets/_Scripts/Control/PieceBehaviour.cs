@@ -141,6 +141,11 @@ public class PieceBehaviour : MonoBehaviour
         //move piece per square
     }
 
+    private void BackToStart()
+    {
+        //observe OnOpponentAttack() to put piece bact to start position
+    }
+
     // Update is called once per frame
     void Update()
     {

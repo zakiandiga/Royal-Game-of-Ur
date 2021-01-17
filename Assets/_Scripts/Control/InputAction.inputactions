@@ -1,0 +1,44 @@
+{
+    "name": "InputAction",
+    "maps": [
+        {
+            "name": "Debug",
+            "id": "4f3227f2-e84d-4261-b398-2b0fb0a799de",
+            "actions": [
+                {
+                    "name": "Screenshot",
+                    "type": "Button",
+                    "id": "04f4cdfa-ed9c-4fc0-882a-59d25ca328a8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "a90cc605-5845-49ca-a89f-ae94de8c57de",
+                    "path": "<Keyboard>/backquote",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Screenshot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "25123c1f-d4cf-47fd-b342-8ec662d4d9ee",
+                    "path": "<XRController>{RightHand}/thumbstickClicked",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Screenshot",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
