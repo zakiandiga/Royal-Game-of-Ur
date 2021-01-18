@@ -6,7 +6,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class PieceBehaviour : MonoBehaviour
 {
-    private XRGrabInteractable grabControl;
     private Rigidbody rb;
     [SerializeField] private Transform startSpawner;
     [SerializeField] private Transform goalSpawner;
@@ -41,7 +40,7 @@ public class PieceBehaviour : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        grabControl = GetComponent<XRGrabInteractable>();
+        
         currentPosition = startSpawner.position;
     }
 
