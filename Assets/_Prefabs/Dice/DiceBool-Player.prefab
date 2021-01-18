@@ -169,6 +169,8 @@ MonoBehaviour:
   altarMask:
     serializedVersion: 2
     m_Bits: 256
+  interactable: 1
+  diceState: 0
 --- !u!114 &306500564122121861
 MonoBehaviour:
   m_ObjectHideFlags: 0

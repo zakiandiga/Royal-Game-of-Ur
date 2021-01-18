@@ -5,19 +5,22 @@ using UnityEngine;
 
 public class PhaseManager : MonoBehaviour
 {
+    private int totalDiceResult, numberDiceResult, boolDiceResult;
+
     #region GameState
-    [SerializeField] private PlayerState playerState;
+    [SerializeField] private PlayerState playerState = PlayerState.DiceRoll; //Temporary for Dice Debug
     public enum PlayerState
     {
-        Delay,
-        Waiting,
-        DiceRoll,
-        PieceMove,
+        Delay, //Cleanup value before turn start
+        Waiting, //Waiting during AI turn, can't interact with object
+        DiceRoll, //Player can roll both dices
+        PieceMove, //Player can move piece (if theres any possible move), update score if any
     }
 
     [SerializeField] private WorldState worldState;
     public enum WorldState
     {
+        startingGame, //Preparation to start the game (Decide who's first)
         playerTurn,
         aiTurn,
         playerWin,
@@ -31,7 +34,7 @@ public class PhaseManager : MonoBehaviour
 
     #region EventAnnouncer
     public static event Action<PhaseManager> OnEnterDiceRoll;
-    public static event Action<PhaseManager> OnExitDiceRoll;
+    public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
     public static event Action<PhaseManager> OnExitPieceMove;
     #endregion
@@ -51,20 +54,38 @@ public class PhaseManager : MonoBehaviour
     #endregion
 
     #region DiceResultObserver
-    private void DiceNumberResultCheck(int result)
+    private void DiceNumberResultCheck(int numResult)
     {
-        Debug.Log("Recieve dice number result from DiceBehaviour, value: " + result);
+        Debug.Log("Recieve dice number result from DiceBehaviour, value: " + numResult);
+        numberDiceResult = numResult;
         //Display on the UI?
         numberDiceThrown = true;
 
     }
 
-    private void DiceBoolResultCheck(int result)
+    private void DiceBoolResultCheck(int boolResult)
     {
-        Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + result);
+        Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + boolResult);
+        boolDiceResult = boolResult;
         //Display on the UI?
         boolDiceThrown = true;
 
+    }
+
+    private void TotalDiceResultCheck()
+    {
+        if(boolDiceResult == 0)
+        {
+            totalDiceResult = numberDiceResult;
+        }
+        if(boolDiceResult == 1)
+        {
+            if (numberDiceResult >= 1 && numberDiceResult <= 3)
+                totalDiceResult = numberDiceResult + 4;
+            else if (numberDiceResult == 4)
+                totalDiceResult = 10;
+        }
+        Debug.Log("Total Dice result = " + totalDiceResult);
     }
     #endregion
 
@@ -80,6 +101,9 @@ public class PhaseManager : MonoBehaviour
         {
             case PlayerState.Delay:
                 //clean up requirement checklist
+                totalDiceResult = 0;
+                numberDiceResult = 0;
+                boolDiceResult = 0;
                 if (numberDiceThrown)
                     numberDiceThrown = false;
                 if (boolDiceThrown)
@@ -95,11 +119,16 @@ public class PhaseManager : MonoBehaviour
                 break;
 
             case PlayerState.DiceRoll:
-                if(numberDiceThrown && boolDiceThrown)
+                if(numberDiceThrown && boolDiceThrown && totalDiceResult == 0)
+                {
+                    TotalDiceResultCheck();
+                    
+                }
+                if(totalDiceResult > 0)
                 {
                     playerState = PlayerState.PieceMove;
-                    OnExitDiceRoll?.Invoke(this);
-                    OnEnterPieceMove?.Invoke(this);
+                    OnExitDiceRoll?.Invoke(totalDiceResult);
+                    Debug.Log("Player state now = " + playerState);
                 }
                 break;
 
