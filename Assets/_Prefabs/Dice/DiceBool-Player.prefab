@@ -1,5 +1,92 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1777563162
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1777563163}
+  m_Layer: 13
+  m_Name: Pivot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1777563163
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777563162}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 306500563720321569}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1784535138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1784535139}
+  - component: {fileID: 1784535140}
+  - component: {fileID: 1784535141}
+  m_Layer: 13
+  m_Name: BoolDiceGrabCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1784535139
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784535138}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 306500563720321569}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &1784535140
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784535138}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1784535141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1784535138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345eae8c364185340a07e2236c4449be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &306500563600736782
 GameObject:
   m_ObjectHideFlags: 0
@@ -45,7 +132,7 @@ GameObject:
   - component: {fileID: 306500564122121870}
   - component: {fileID: 306500564122121865}
   - component: {fileID: 306500564122121861}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DiceBool-Player
   m_TagString: dice
   m_Icon: {fileID: 0}
@@ -61,12 +148,14 @@ Transform:
   m_GameObject: {fileID: 306500563720611329}
   m_LocalRotation: {x: -0.1702963, y: 0.25907165, z: 0.87335455, w: 0.37567678}
   m_LocalPosition: {x: 1.0141, y: 0.4956, z: 2.3954}
-  m_LocalScale: {x: 1.25, y: 1.2500002, z: 1.2500002}
+  m_LocalScale: {x: 1.2500007, y: 1.2500002, z: 1.2499999}
   m_Children:
   - {fileID: 306500565661984420}
   - {fileID: 306500565142268681}
   - {fileID: 306500565280373044}
   - {fileID: 306500563600736777}
+  - {fileID: 1784535139}
+  - {fileID: 1777563163}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -144.516, y: 172.747, z: -44.2269}
@@ -169,7 +258,7 @@ MonoBehaviour:
   altarMask:
     serializedVersion: 2
     m_Bits: 256
-  interactable: 1
+  interactable: 0
   diceState: 0
 --- !u!114 &306500564122121861
 MonoBehaviour:
@@ -184,10 +273,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InteractionManager: {fileID: 0}
-  m_Colliders: []
+  m_Colliders:
+  - {fileID: 1784535140}
   m_InteractionLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2048
   m_OnFirstHoverEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -216,9 +306,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_CustomReticle: {fileID: 0}
-  m_AttachTransform: {fileID: 0}
+  m_AttachTransform: {fileID: 1777563163}
   m_AttachEaseInTime: 0.15
-  m_MovementType: 0
+  m_MovementType: 1
   m_TrackPosition: 1
   m_SmoothPosition: 0
   m_SmoothPositionAmount: 5

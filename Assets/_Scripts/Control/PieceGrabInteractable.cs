@@ -1,21 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.XR.Interaction.Toolkit;
 
-public class RigController : MonoBehaviour
+public class PieceGrabInteractable : XRGrabInteractable
 {
-    [SerializeField] private InputActionReference movement;
-
     // Start is called before the first frame update
     void Start()
     {
-        movement.action.Enable();   
+        
     }
 
-    private void OnDestroy()
+    public void OnActivate(XRBaseInteractor interactor, GameObject piece)
     {
-        movement.action.Disable();
+        OnSelectEntered(interactor);
     }
 
     // Update is called once per frame

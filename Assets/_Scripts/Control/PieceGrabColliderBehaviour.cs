@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GrabColliderBehaviour : MonoBehaviour
+public class PieceGrabColliderBehaviour : MonoBehaviour
 {
     //This script is attached to DiceGrabCollider (Player dice children)
-    DiceBehaviour diceBehaviour;
+    PieceBehaviour pieceBehaviour;
 
     // Start is called before the first frame update
     void Start()
     {
-        diceBehaviour = GetComponentInParent<DiceBehaviour>();
+        pieceBehaviour = GetComponentInParent<PieceBehaviour>();
         
     }
 
@@ -18,7 +18,7 @@ public class GrabColliderBehaviour : MonoBehaviour
     {
         if(other.tag == "Hand")
         {
-            diceBehaviour.GrabColliderEnter();
+            pieceBehaviour.GrabColliderEnter();
         }
     }
 
@@ -26,7 +26,7 @@ public class GrabColliderBehaviour : MonoBehaviour
     {
         if(other.tag == "Hand")
         {
-            diceBehaviour.GrabColliderExit();
+            pieceBehaviour.GrabColliderExit();
         }
     }
 }
