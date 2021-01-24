@@ -24,6 +24,7 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnMoveValidCheck += MoveValidHighlight;
         PieceBehaviour.OnExitPieceCollider += ExitPieceCollider;
         PieceBehaviour.OnRaycastHit += SquareHitHandler;
+        PieceBehaviour.OnPieceDropped += PieceDropHandler;
         PhaseManager.OnExitDiceRoll += LegalCounter;
     }
 
@@ -32,6 +33,7 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnMoveValidCheck -= MoveValidHighlight;
         PieceBehaviour.OnExitPieceCollider -= ExitPieceCollider;
         PieceBehaviour.OnRaycastHit -= SquareHitHandler;
+        PieceBehaviour.OnPieceDropped -= PieceDropHandler;
         PhaseManager.OnExitDiceRoll -= LegalCounter;
     }
 
@@ -80,6 +82,18 @@ public class BoardManager : MonoBehaviour
                 playerSquare[i].GetComponent<MeshRenderer>().enabled = false;
             }
         
+        }
+    }
+
+    private void PieceDropHandler(bool legalDrop)
+    {
+        foreach (GameObject square in playerSquare)
+        {
+            MeshRenderer highlight = square.GetComponent<MeshRenderer>();
+            if(highlight.enabled == true)
+            {
+                highlight.enabled = false;
+            }
         }
     }
 }

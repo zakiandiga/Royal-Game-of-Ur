@@ -21,13 +21,15 @@ public class PieceBehaviour : MonoBehaviour
     #endregion
 
     #region MovementProperty
-    private bool legalLand = true;
+    private bool legalDrop = false;
     private bool hasValidMove = false;
+    private bool isFinish = false;
     private int diceResult;
 
     //private List<int> squareIndexes;
-    private int currentSquare;
+    private int currentSquare = 0;
     private int legalIndex = 0;
+    private int finishSquareIndex = 15;
     private string targetHit;
 
     #endregion
@@ -35,9 +37,13 @@ public class PieceBehaviour : MonoBehaviour
 
     [SerializeField] private InputActionReference raycasting; //temp
 
+    #region Event Announcer
     public static event Action<int> OnMoveValidCheck;
     public static event Action<PieceBehaviour> OnExitPieceCollider;
     public static event Action<string, bool> OnRaycastHit;
+    public static event Action<bool> OnPieceDropped;
+
+    #endregion
 
     [SerializeField] private PieceOwner pieceOwner; //ASSIGN pieceOwner ON EDITOR
     public enum PieceOwner
@@ -76,9 +82,9 @@ public class PieceBehaviour : MonoBehaviour
         defaultRotation = transform.rotation;
 
         //Testing roll dice
-        currentSquare = 2;
-        diceResult = 3;
-        CheckLegalMove();
+        //currentSquare = 2;
+        //diceResult = 3;
+        //CheckLegalMove();
     }
 
     private void OnEnable()
@@ -103,12 +109,11 @@ public class PieceBehaviour : MonoBehaviour
     }
        
     private void CheckLegalMove() //should be on PhaseManager or PlayerManager?
-    {
-        int maxLegalIndex = 15;
+    {        
         legalIndex = currentSquare + diceResult;
-        if(legalIndex > maxLegalIndex)
+        if(legalIndex > finishSquareIndex)
         {
-            legalIndex = maxLegalIndex;
+            legalIndex = finishSquareIndex;
         }
 
         pieceState = PieceState.Ready;
@@ -150,7 +155,7 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    public void OnHandEnter()
+    public void OnEnterGrab()
     {
         //tell the board to turn off highlight
 
@@ -178,10 +183,11 @@ public class PieceBehaviour : MonoBehaviour
                 targetHit = hit.transform.name;
                 int.TryParse(targetHit, out targetHitConvert);
                 //Debug.Log("Hit on " + targetHitConvert);
+                
 
                 if(targetHitConvert == legalIndex)
                 {
-                    targetPosition = hit.transform.position;
+                    targetPosition = hit.transform.position;                    
                     OnRaycastHit?.Invoke(hit.transform.name, true);
                 }
                 else if (targetHitConvert != legalIndex)
@@ -196,7 +202,7 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    public void OnHandExit()
+    public void OnExitGrab()
     {
         if (pieceState != PieceState.Ready)
         {
@@ -204,7 +210,7 @@ public class PieceBehaviour : MonoBehaviour
         }
 
         //Landing at square handler
-        float lerpTime = 0.5f;
+        //float lerpTime = 0.5f;
         Vector3 releasePosition = transform.position;
 
         //run the drop handler function
@@ -219,6 +225,7 @@ public class PieceBehaviour : MonoBehaviour
             transform.rotation = defaultRotation;
             transform.position = currentPosition;
 
+            legalDrop = false;
             Debug.Log("Illegal DROP");
 
             //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
@@ -233,8 +240,20 @@ public class PieceBehaviour : MonoBehaviour
             currentPosition = transform.position; //Update currentPosition value
 
             Debug.Log("LEGAL DROP");
+            legalDrop = true;
+            OnPieceDropped?.Invoke(legalDrop);
 
-            KickOpponentPiece();           
+            if(targetHit == finishSquareIndex.ToString())
+            {
+                this.isFinish = true;
+
+                //Polish, animate piece movement to goalSpawner
+                transform.position = goalSpawner.position;
+            }
+
+            KickOpponentPiece(); 
+            
+            //this.grabCollider = false;
         }
     }
 
@@ -282,35 +301,41 @@ public class PieceBehaviour : MonoBehaviour
             RaycastingTest();
         }
 
-
-
-    }
-
-        /*
-    private void PieceGrab(HandPresence hand) //REMOVE THIS
-    {
-        if(pieceState == PieceState.Grabable)
+        switch (pieceState)
         {
-            pieceState = PieceState.OnHand;
+            case PieceState.Waiting:
+                //On Dropped, if legal || if !finish
+                //exit to Ready
+                break;
+            case PieceState.Ready:
+                //if !pieceGrabCollision.enabled
+                //pieceGrabCollision.enabled = true
+                //Exit/Enter handled by GrabColliderEnter() && GrabColliderExit()
+                break;
+            case PieceState.Grabable:
+                //Exit/Enter handled by OnEnterGrab() && OnExitGrab()
+                break;
+            case PieceState.OnHand:
+                //Specific behaviour for this state
+                break;
+            case PieceState.Dropped:
+                //specific behaviour for this state
+                break;
+            case PieceState.Finish:
+                //Do nothing till the end of the game
+                //give score?
+                break;
+                
+
         }
+
     }
 
-    private void PieceDrop(HandPresence hand) //REMOVE THIS
-    {
-        //transform.rotation =  //rotate to default rotation
+        //Waiting,  //Pieces not interactable
+        //Ready,    //Pieces ready to interact
+        //Grabable, //Pieces can be grab
+        //OnHand,   //A piece is currently grabbed
+        //Dropped,  //Piece is dropped on board
+        //Finish
 
-        if(pieceState == PieceState.OnHand)
-        {
-            //if move is legal, drop on the selected square, then MovePiece(Vector3 selectedSquare.position)
-
-            //if dropped outside altar, drop on startSpawner (to be handled as dropped not on board)
-
-            //if move is not legal or if dropped not on board, drop on current position
-            
-
-            pieceState = PieceState.Dropped;
-            currentPosition = transform.position;
-        }
-    }
-    */
 }

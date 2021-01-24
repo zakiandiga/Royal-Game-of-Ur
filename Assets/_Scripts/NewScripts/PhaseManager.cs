@@ -8,7 +8,7 @@ public class PhaseManager : MonoBehaviour
     private int totalDiceResult, numberDiceResult, boolDiceResult;
 
     #region GameState
-    [SerializeField] private PlayerState playerState = PlayerState.DiceRoll; //Temporary for Dice Debug
+    [SerializeField] private PlayerState playerState = PlayerState.Delay; //Temporary for Dice Debug
     public enum PlayerState
     {
         Delay, //Cleanup value before turn start
@@ -33,6 +33,7 @@ public class PhaseManager : MonoBehaviour
     #endregion
 
     #region EventAnnouncer
+    public static event Action<string> OnPhaseChange;
     public static event Action<PhaseManager> OnEnterDiceRoll;
     public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
@@ -44,6 +45,7 @@ public class PhaseManager : MonoBehaviour
     {
         DiceBehaviour.OnDiceNumberResult += DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
+        PieceBehaviour.OnPieceDropped += PieceDropCheck;
     }
 
     private void OnDestroy()
@@ -89,6 +91,11 @@ public class PhaseManager : MonoBehaviour
     }
     #endregion
 
+    private void PieceDropCheck(bool legalDrop)
+    {
+        pieceMoved = legalDrop;
+    }
+
     private void PieceMoveCheck() //On piece moved
     {
         pieceMoved = true;
@@ -114,6 +121,7 @@ public class PhaseManager : MonoBehaviour
                 if (!numberDiceThrown && !boolDiceThrown && !pieceMoved)
                 {
                     playerState = PlayerState.DiceRoll;
+                    OnPhaseChange?.Invoke(playerState.ToString());
                     OnEnterDiceRoll?.Invoke(this);
                 }
                 break;
@@ -128,15 +136,18 @@ public class PhaseManager : MonoBehaviour
                 {
                     playerState = PlayerState.PieceMove;
                     OnExitDiceRoll?.Invoke(totalDiceResult);
+                    OnPhaseChange?.Invoke(playerState.ToString());
                     Debug.Log("Player state now = " + playerState);
                 }
                 break;
 
             case PlayerState.PieceMove:
-                if(pieceMoved)
+                if(pieceMoved) //if piece moved legally
                 {
                     playerState = PlayerState.Waiting;
+
                     OnExitPieceMove?.Invoke(this);
+                    OnPhaseChange?.Invoke(playerState.ToString());
                 }
                 break;
 
@@ -144,7 +155,12 @@ public class PhaseManager : MonoBehaviour
                 //wait until AI/Other player finish their turn
                 if(worldState == WorldState.playerTurn)
                 {
-                    playerState = PlayerState.Delay;
+                    if(playerState != PlayerState.Delay)
+                    {
+                        playerState = PlayerState.Delay;
+                        OnPhaseChange?.Invoke(playerState.ToString());
+                    }
+
                 }
                 break;
 
