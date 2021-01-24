@@ -86,19 +86,7 @@ public class DiceBehaviour : MonoBehaviour
         }
             
     }
-
-    /*
-    private void InteractableOff(int result) //is this redundant with DiceCheck()?
-    {
-        if(interactable)
-        {
-            interactable = false;
-            grabCollider.SetActive(false);
-        }
-            
-
-    }
-    */
+    
     #endregion
 
     public void GrabColliderEnter()

@@ -7,8 +7,8 @@ public class BoardManager : MonoBehaviour
 {
     public GameObject mainBoard;
 
-    public List<GameObject> squares;
-
+    public List<GameObject> playerSquare; //Square that response to player's interaction
+    public List<GameObject> aISquare; //Square that response to AI's interaction
 
     [SerializeField] private int diceResult = 2;
     [SerializeField] private int currentSquareNumber = 0;
@@ -16,12 +16,23 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
+        legalMove = diceResult + currentSquareNumber; //test
+    }
+
+    private void OnEnable()
+    {
+        PieceBehaviour.OnMoveValidCheck += MoveValidHighlight;
+        PieceBehaviour.OnExitPieceCollider += ExitPieceCollider;
         PieceBehaviour.OnRaycastHit += SquareHitHandler;
         PhaseManager.OnExitDiceRoll += LegalCounter;
+    }
 
-        legalMove = diceResult + currentSquareNumber;
-        Debug.Log("Legal square to move = " + legalMove);
-
+    private void OnDisable()
+    {
+        PieceBehaviour.OnMoveValidCheck -= MoveValidHighlight;
+        PieceBehaviour.OnExitPieceCollider -= ExitPieceCollider;
+        PieceBehaviour.OnRaycastHit -= SquareHitHandler;
+        PhaseManager.OnExitDiceRoll -= LegalCounter;
     }
 
     private void LegalCounter(int dice)
@@ -29,75 +40,46 @@ public class BoardManager : MonoBehaviour
         diceResult = dice;
     }
 
-    private void SquareHitHandler(string squareName)
+    private void MoveValidHighlight (int squareIndex)
     {
-        //legalMove = currentSquareNumber + diceResult;
-        //int squareHitNumber;
-        //int.TryParse(squareName, out squareHitNumber);
-        string legalMoveString = legalMove.ToString();
+        Debug.Log("legal move square is: Square " + squareIndex);
+
+        MeshRenderer highlight = playerSquare[squareIndex].GetComponent<MeshRenderer>();
+        highlight.enabled = true;
+        highlight.material.color = Color.green;
+    }
+
+    private void ExitPieceCollider (PieceBehaviour piece)
+    {
+        foreach (GameObject square in playerSquare)
+        {
+            MeshRenderer highlight = square.GetComponent<MeshRenderer>();
+            if (highlight.enabled == true)
+            {
+                highlight.enabled = false;
+            }
+
+        }
+    }
+
+    private void SquareHitHandler(string squareName, bool isLegal)
+    {
+        bool isLegalSquare = isLegal;        
         
-        for (int i = 0; i < squares.Count; i++)
+        for (int i = 0; i < playerSquare.Count; i++)
         {
-            int squareIndex = i + diceResult;
-            if(squareIndex > squares.Count)
+            if(playerSquare[i].gameObject.name == squareName && isLegalSquare)
             {
-                squareIndex = 15;
+                MeshRenderer highlight = playerSquare[i].GetComponent<MeshRenderer>();
+                highlight.enabled = true;
+                highlight.material.color = Color.green;
             }
 
-            if(squares[squareIndex].name.ToString() == squareName)
+            if(!isLegalSquare)
             {
-                squares[squareIndex].GetComponent<MeshRenderer>().enabled = true;
-                Debug.Log("This square is legal " + squares[squareIndex].name);
+                playerSquare[i].GetComponent<MeshRenderer>().enabled = false;
             }
-
-            if(squares[squareIndex].name.ToString() != squareName)
-            {
-                squares[squareIndex].GetComponent<MeshRenderer>().enabled = false;
-            }
+        
         }
-
-        /*
-        foreach (GameObject square in squares)
-        {
-            //Debug.Log(legalMove.ToString());
-            //int.TryParse(square.name, out currentSquareNumber);
-
-            //int.TryParse(square.name, out squareHitConvert);
-
-            if(squareName == legalMove.ToString() && square.GetComponent<MeshRenderer>().enabled == false)
-            {
-                square.GetComponent<MeshRenderer>().enabled = true;
-                Debug.Log("Target square (" + square.name + ") is LEGAL");
-            }
-
-            if(squareName != legalMove.ToString())
-            {
-                square.GetComponent<MeshRenderer>().enabled = false;
-                //Debug.Log("Target ILLEGAL!");
-                //Announce illegal
-
-            }
-        }
-        */
-
-        /*
-        foreach(GameObject square in squares)
-        {
-            int.TryParse(square.name, out squareNumber);
-            int legalSquare = squareNumber + diceResult;
-
-            if(square.name == squareName && square.GetComponent<MeshRenderer>().enabled == false)
-            {
-                square.GetComponent<MeshRenderer>().enabled = true;
-                Debug.Log("TARGET = " + square.name);
-            }
-            
-            if(square.name != squareName && square.GetComponent<MeshRenderer>().enabled == true)
-            {
-                square.GetComponent<MeshRenderer>().enabled = false;
-            }
-            
-        }
-        */
     }
 }
