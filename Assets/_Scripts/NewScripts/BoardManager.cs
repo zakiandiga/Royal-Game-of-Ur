@@ -14,6 +14,11 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private int currentSquareNumber = 0;
     [SerializeField] private int legalMove;
 
+    [SerializeField] private LayerMask hitMask;
+
+    public static event Action<bool, int> OnOccupiedSpace;
+
+
     private void Start()
     {
         legalMove = diceResult + currentSquareNumber; //test
@@ -42,13 +47,15 @@ public class BoardManager : MonoBehaviour
         diceResult = dice;
     }
 
-    private void MoveValidHighlight (int squareIndex)
+    private void MoveValidHighlight (int index)
     {
-        Debug.Log("legal move square is: Square " + squareIndex);
+        int squareIndex = index;
 
         MeshRenderer highlight = playerSquare[squareIndex].GetComponent<MeshRenderer>();
         highlight.enabled = true;
         highlight.material.color = Color.green;
+
+
     }
 
     private void ExitPieceCollider (PieceBehaviour piece)

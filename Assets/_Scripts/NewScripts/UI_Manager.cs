@@ -9,6 +9,8 @@ public class UI_Manager : MonoBehaviour
     public Text phase;
     public Text dice;
 
+    public Text pieceStateText;
+
     public Text debug;
 
     // Start is called before the first frame update
@@ -21,6 +23,8 @@ public class UI_Manager : MonoBehaviour
     {
         PhaseManager.OnPhaseChange += PhaseUpdate;
         PhaseManager.OnExitDiceRoll += NewDiceResult;
+
+        PieceBehaviour.OnPieceStateCheck += PieceStateUpdate;
     }
 
     private void PhaseUpdate(string phaseChange)
@@ -33,6 +37,12 @@ public class UI_Manager : MonoBehaviour
     {
         string resultUI = result.ToString();
         dice.text = "Dice Result: " + resultUI;
+    }
+
+    private void PieceStateUpdate(string pieceState)
+    {
+        string currentPieceState = pieceState;
+        pieceStateText.text = "Piece State: " + pieceState;
     }
 
     // Update is called once per frame

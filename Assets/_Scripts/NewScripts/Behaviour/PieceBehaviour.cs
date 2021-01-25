@@ -9,6 +9,7 @@ public class PieceBehaviour : MonoBehaviour
 {
     #region PhysicalProperty
     private Rigidbody rb;
+    private SphereCollider grabCollider;
     [SerializeField] private Transform startSpawner;
     [SerializeField] private Transform goalSpawner;
 
@@ -32,19 +33,25 @@ public class PieceBehaviour : MonoBehaviour
     private int finishSquareIndex = 15;
     private string targetHit;
 
+
     #endregion
 
 
     [SerializeField] private InputActionReference raycasting; //temp
 
     #region Event Announcer
+    public static event Action<string> OnPieceStateCheck;
+
     public static event Action<int> OnMoveValidCheck;
     public static event Action<PieceBehaviour> OnExitPieceCollider;
     public static event Action<string, bool> OnRaycastHit;
     public static event Action<bool> OnPieceDropped;
 
+    public static event Action<GameObject> OnPieceFinish;
+
     #endregion
 
+    #region Piece Type,Owner, and State
     [SerializeField] private PieceOwner pieceOwner; //ASSIGN pieceOwner ON EDITOR
     public enum PieceOwner
     {
@@ -70,13 +77,18 @@ public class PieceBehaviour : MonoBehaviour
         Grabable, //Pieces can be grab
         OnHand,   //A piece is currently grabbed
         Dropped,  //Piece is dropped on board
-        Finish    //Piece is finish from board
+        Finished
+        
     }
+    #endregion
 
     // Start is called before the first frame update
     void Start()
     {    
         rb = GetComponent<Rigidbody>();
+        grabCollider = GetComponentInChildren<SphereCollider>();
+
+        grabCollider.enabled = false;
         
         currentPosition = startSpawner.position;
         defaultRotation = transform.rotation;
@@ -85,11 +97,19 @@ public class PieceBehaviour : MonoBehaviour
         //currentSquare = 2;
         //diceResult = 3;
         //CheckLegalMove();
+
+        pieceState = PieceState.Dropped;
+        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+
     }
 
     private void OnEnable()
     {
         PhaseManager.OnExitDiceRoll += DiceResultCheck;
+        PhaseManager.OnExitPieceMove += PieceMoveConfirmed;
+        HandPresence.OnEnterGrip += PieceGrabEnter;
+        HandPresence.OnExitGrab += PieceGrabExit;
+
 
         raycasting.action.Enable(); //temp
     }
@@ -104,8 +124,14 @@ public class PieceBehaviour : MonoBehaviour
     private void DiceResultCheck(int result)
     {
         diceResult = result;
+
         CheckLegalMove();
-      
+    }
+
+    private void CheckOccupiedSquares()
+    {
+
+        
     }
        
     private void CheckLegalMove() //should be on PhaseManager or PlayerManager?
@@ -117,7 +143,8 @@ public class PieceBehaviour : MonoBehaviour
         }
 
         pieceState = PieceState.Ready;
-        Debug.Log("legal move = " + legalIndex);
+        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+        //Debug.Log("legal move = " + legalIndex);
 
     }
 
@@ -126,6 +153,9 @@ public class PieceBehaviour : MonoBehaviour
         if (pieceState == PieceState.Ready)
         {
             pieceState = PieceState.Grabable;
+
+            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+
             //Debug.Log(this.gameObject.name + " is GRABBABLE");
 
             OnMoveValidCheck?.Invoke(legalIndex); //Test, suppost to be on !hasValidMove
@@ -145,9 +175,11 @@ public class PieceBehaviour : MonoBehaviour
 
     public void GrabColliderExit()
     {
-        if (pieceState == PieceState.Grabable)
+        if (pieceState != PieceState.OnHand)
         {
             pieceState = PieceState.Ready;
+            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+
             //Debug.Log(this.gameObject.name + " is NOT GRABBABLE");
 
             OnExitPieceCollider?.Invoke(this);
@@ -155,13 +187,15 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    public void OnEnterGrab()
+    public void PieceGrabEnter(HandPresence hand)
     {
         //tell the board to turn off highlight
 
-        if (pieceState != PieceState.OnHand)
+        if (pieceState == PieceState.Grabable)
         {
             pieceState = PieceState.OnHand;
+            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+
         }
     }
 
@@ -202,20 +236,16 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    public void OnExitGrab()
+    public void PieceGrabExit(HandPresence hand)
     {
-        if (pieceState != PieceState.Ready)
-        {
-            pieceState = PieceState.Ready;
-        }
-
+        
         //Landing at square handler
         //float lerpTime = 0.5f;
-        Vector3 releasePosition = transform.position;
-
-        //run the drop handler function
-        DropPiece();
-        
+        if(pieceState == PieceState.OnHand)
+        {
+            //Vector3 releasePosition = transform.position;
+            DropPiece();
+        }        
     }
         
     private void DropPiece()
@@ -227,6 +257,9 @@ public class PieceBehaviour : MonoBehaviour
 
             legalDrop = false;
             Debug.Log("Illegal DROP");
+
+            pieceState = PieceState.Ready;
+            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
 
             //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
         }
@@ -240,8 +273,7 @@ public class PieceBehaviour : MonoBehaviour
             currentPosition = transform.position; //Update currentPosition value
 
             Debug.Log("LEGAL DROP");
-            legalDrop = true;
-            OnPieceDropped?.Invoke(legalDrop);
+            legalDrop = true;            
 
             if(targetHit == finishSquareIndex.ToString())
             {
@@ -249,7 +281,13 @@ public class PieceBehaviour : MonoBehaviour
 
                 //Polish, animate piece movement to goalSpawner
                 transform.position = goalSpawner.position;
+                pieceState = PieceState.Finished;
+
+                OnPieceFinish?.Invoke(this.gameObject);
             }
+
+            this.currentSquare = legalIndex;
+            OnPieceDropped?.Invoke(legalDrop);
 
             KickOpponentPiece(); 
             
@@ -262,6 +300,11 @@ public class PieceBehaviour : MonoBehaviour
         Debug.Log("If opponent's piece is here, kick it!");
     }
 
+    private void PieceMoveConfirmed(PhaseManager phase)
+    {
+        pieceState = PieceState.Dropped;
+        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+    }
 
     private void MovePiece(Vector3 selectedSquare)
     {
@@ -301,33 +344,18 @@ public class PieceBehaviour : MonoBehaviour
             RaycastingTest();
         }
 
-        switch (pieceState)
+        if(pieceState == PieceState.Ready)
         {
-            case PieceState.Waiting:
-                //On Dropped, if legal || if !finish
-                //exit to Ready
-                break;
-            case PieceState.Ready:
-                //if !pieceGrabCollision.enabled
-                //pieceGrabCollision.enabled = true
-                //Exit/Enter handled by GrabColliderEnter() && GrabColliderExit()
-                break;
-            case PieceState.Grabable:
-                //Exit/Enter handled by OnEnterGrab() && OnExitGrab()
-                break;
-            case PieceState.OnHand:
-                //Specific behaviour for this state
-                break;
-            case PieceState.Dropped:
-                //specific behaviour for this state
-                break;
-            case PieceState.Finish:
-                //Do nothing till the end of the game
-                //give score?
-                break;
-                
-
+            if (!grabCollider.enabled)
+                grabCollider.enabled = true;
         }
+
+        if(pieceState == PieceState.Dropped)
+        {
+            if (grabCollider.enabled)
+                grabCollider.enabled = false;
+        }
+
 
     }
 

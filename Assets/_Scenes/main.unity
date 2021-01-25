@@ -52064,6 +52064,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16b64ce9bdda1f14da0574001cd99943, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  switchPlayer: {fileID: -3986720667674603621, guid: f26affc14c3ac2048a1673f6cb728e12,
+    type: 3}
   playerState: 0
   worldState: 0
 --- !u!4 &1011607510
@@ -52121,9 +52123,9 @@ MonoBehaviour:
   - {fileID: 2147292234}
   - {fileID: 543478466}
   - {fileID: 509175622}
-  - {fileID: 1393129658}
-  - {fileID: 1361654490}
-  - {fileID: 1306209703}
+  - {fileID: 1722230596}
+  - {fileID: 1801880576}
+  - {fileID: 1563190778}
   aISquare:
   - {fileID: 1238772252}
   - {fileID: 1549411034}
@@ -52144,6 +52146,9 @@ MonoBehaviour:
   diceResult: 0
   currentSquareNumber: 0
   legalMove: 0
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 2147483648
 --- !u!1 &1012780759
 GameObject:
   m_ObjectHideFlags: 0
@@ -56845,6 +56850,84 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!1 &1018755513
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1018755514}
+  - component: {fileID: 1018755516}
+  - component: {fileID: 1018755515}
+  m_Layer: 5
+  m_Name: PieceState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1018755514
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018755513}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_Children: []
+  m_Father: {fileID: 1116535588}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: -28.2}
+  m_SizeDelta: {x: 160, y: 35.14}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1018755515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018755513}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: PieceState
+--- !u!222 &1018755516
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1018755513}
+  m_CullTransparentMesh: 0
 --- !u!1 &1022225246
 GameObject:
   m_ObjectHideFlags: 0
@@ -58426,14 +58509,15 @@ RectTransform:
   - {fileID: 1219701868}
   - {fileID: 1086764577}
   - {fileID: 2276451}
+  - {fileID: 1018755514}
   - {fileID: 1797505313}
   m_Father: {fileID: 1681276543}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -700, y: -500}
+  m_AnchoredPosition: {x: 0, y: -22.120087}
+  m_SizeDelta: {x: -700, y: -455.76016}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1116535589
 MonoBehaviour:
@@ -58450,6 +58534,7 @@ MonoBehaviour:
   turn: {fileID: 1219701869}
   phase: {fileID: 1086764578}
   dice: {fileID: 2276452}
+  pieceStateText: {fileID: 1018755515}
   debug: {fileID: 1797505314}
 --- !u!114 &1116535590
 MonoBehaviour:
@@ -97147,11 +97232,11 @@ RectTransform:
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_Children: []
   m_Father: {fileID: 1116535588}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -28.2}
+  m_AnchoredPosition: {x: 0, y: -62.7}
   m_SizeDelta: {x: 160, y: 35.14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1797505314
@@ -107266,7 +107351,7 @@ PrefabInstance:
         type: 3}
       propertyPath: goalSpawner
       value: 
-      objectReference: {fileID: 1890515263}
+      objectReference: {fileID: 1889692258}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: startSpawner
@@ -107276,6 +107361,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: White Piece Raven
+      objectReference: {fileID: 0}
+    - target: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: m_TagString
+      value: raven
       objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384675, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
@@ -107639,11 +107729,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: White Piece Eagle
       objectReference: {fileID: 0}
+    - target: {fileID: 7232705085712336077, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: m_TagString
+      value: eagle
+      objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: goalSpawner
       value: 
-      objectReference: {fileID: 1890515263}
+      objectReference: {fileID: 713227565}
     - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: startSpawner
@@ -107672,7 +107767,7 @@ PrefabInstance:
         type: 3}
       propertyPath: goalSpawner
       value: 
-      objectReference: {fileID: 1890515263}
+      objectReference: {fileID: 838195603}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: startSpawner
@@ -107682,6 +107777,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: White Piece Rooster
+      objectReference: {fileID: 0}
+    - target: {fileID: 7817868860104026350, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: m_TagString
+      value: rooster
       objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026351, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
@@ -107752,6 +107852,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: White Piece Stormbird
       objectReference: {fileID: 0}
+    - target: {fileID: 8089614824722154704, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: m_TagString
+      value: stormbird
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154705, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: m_RootOrder
@@ -107816,7 +107921,7 @@ PrefabInstance:
         type: 3}
       propertyPath: goalSpawner
       value: 
-      objectReference: {fileID: 1890515263}
+      objectReference: {fileID: 2141643535}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: startSpawner

@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PhaseManager : MonoBehaviour
 {
     private int totalDiceResult, numberDiceResult, boolDiceResult;
+
+    [SerializeField] private InputActionReference switchPlayer; //TEMP
 
     #region GameState
     [SerializeField] private PlayerState playerState = PlayerState.Delay; //Temporary for Dice Debug
@@ -40,20 +43,38 @@ public class PhaseManager : MonoBehaviour
     public static event Action<PhaseManager> OnExitPieceMove;
     #endregion
 
+    private List<GameObject> playerFinishedPieces;
+    private int maxFinishedPiece = 5;
+
     #region Start/OnDestroy
     void Start()
+    {
+        //Testing
+        worldState = WorldState.playerTurn;
+    }
+
+    private void OnEnable()
     {
         DiceBehaviour.OnDiceNumberResult += DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropped += PieceDropCheck;
+        PieceBehaviour.OnPieceFinish += PieceFinishCheck;
+
+        switchPlayer.action.Enable(); //TEMP
     }
 
     private void OnDestroy()
     {
         DiceBehaviour.OnDiceNumberResult -= DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
+        PieceBehaviour.OnPieceDropped -= PieceDropCheck;
+        PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
+
+        switchPlayer.action.Disable(); //TEMP
     }
     #endregion
+
+
 
     #region DiceResultObserver
     private void DiceNumberResultCheck(int numResult)
@@ -101,9 +122,33 @@ public class PhaseManager : MonoBehaviour
         pieceMoved = true;
     }
 
+    private void SwitchToPlayerTurn()
+    {
+        worldState = WorldState.playerTurn;
+    }
+
+    private void PieceFinishCheck(GameObject piece)
+    {
+        playerFinishedPieces.Add(piece);
+
+        if(playerFinishedPieces.Count >= maxFinishedPiece)
+        {
+            Debug.Log("PLAYER WIN");
+            worldState = WorldState.playerWin;
+
+            //Win event
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
+        if(switchPlayer.action.triggered)
+        {
+            SwitchToPlayerTurn();
+        }
+
+
         switch (playerState)
         {
             case PlayerState.Delay:
@@ -145,6 +190,7 @@ public class PhaseManager : MonoBehaviour
                 if(pieceMoved) //if piece moved legally
                 {
                     playerState = PlayerState.Waiting;
+                    worldState = WorldState.aiTurn;
 
                     OnExitPieceMove?.Invoke(this);
                     OnPhaseChange?.Invoke(playerState.ToString());
