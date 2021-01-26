@@ -33,6 +33,7 @@ TagManager:
   - Interactable
   - NonInteractable
   - Dice
+  - SquareMask
   - 
   - 
   - 
@@ -48,9 +49,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - AIPieces
+  - PlayerPieces
   m_SortingLayers:
   - name: Default
     uniqueID: 0
