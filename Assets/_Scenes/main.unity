@@ -13147,6 +13147,12 @@ Transform:
   m_Father: {fileID: 31439118}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &209541379 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7817868860104026350, guid: f09c93e870bfb9c4fabca4385cbfce72,
+    type: 3}
+  m_PrefabInstance: {fileID: 7817868860348366136}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &211104465
 GameObject:
   m_ObjectHideFlags: 0
@@ -40197,6 +40203,12 @@ Transform:
   m_Father: {fileID: 487196015}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
+--- !u!1 &735154383 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8089614824722154704, guid: 503fbff2053e5ee40a4a259534d2e010,
+    type: 3}
+  m_PrefabInstance: {fileID: 8089614825902301724}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &736223213
 GameObject:
   m_ObjectHideFlags: 0
@@ -62886,6 +62898,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
   m_IsActive: 1
+--- !u!1 &1304574784 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+    type: 3}
+  m_PrefabInstance: {fileID: 3851121467192512846}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1304794542
 GameObject:
   m_ObjectHideFlags: 0
@@ -73153,7 +73171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1401858833}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.684, y: 0, z: 0.006}
+  m_LocalPosition: {x: -2.684, y: -0.201, z: 0.006}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1143051120}
@@ -101288,36 +101306,36 @@ MonoBehaviour:
   opponent: {fileID: 1571209205}
   gameboardlabels: {fileID: 9662805}
   depth: 1
-  playercam: {fileID: 734642020}
+  playercam: {fileID: 1055781145}
   board: 00000000000000000000000000000000000000000000000000000000000000000000000000000000
   boardpieces:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2087965878}
+  - {fileID: 735154383}
+  - {fileID: 1304574784}
+  - {fileID: 209541379}
+  - {fileID: 103989648}
   - {fileID: 2136578701}
   - {fileID: 970364051}
   - {fileID: 482571301}
   - {fileID: 1873780001}
   - {fileID: 103989648}
   boardspots:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1238772253}
+  - {fileID: 1549411035}
+  - {fileID: 1141792330}
+  - {fileID: 1554585829}
+  - {fileID: 1208722008}
+  - {fileID: 953747298}
+  - {fileID: 1681234481}
+  - {fileID: 1937608530}
+  - {fileID: 1971958241}
+  - {fileID: 541037047}
+  - {fileID: 2147292235}
+  - {fileID: 543478467}
+  - {fileID: 509175623}
+  - {fileID: 1393129659}
+  - {fileID: 1361654491}
+  - {fileID: 1306209704}
   dropspots:
   - {fileID: 932570364}
   - {fileID: 129312760}
@@ -107917,6 +107935,12 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &2087965878 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5664134474777843051, guid: c5061b2acf0e7494eb737a293459db62,
+    type: 3}
+  m_PrefabInstance: {fileID: 5664134476160027146}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2091697457
 GameObject:
   m_ObjectHideFlags: 0
