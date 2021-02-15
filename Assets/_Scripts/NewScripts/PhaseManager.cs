@@ -122,7 +122,7 @@ public class PhaseManager : MonoBehaviour
         pieceMoved = true;
     }
 
-    private void SwitchToPlayerTurn()
+    public void SwitchToPlayerTurn() //set to private when Skip AI Turn isn't used anymore
     {
         worldState = WorldState.playerTurn;
     }
