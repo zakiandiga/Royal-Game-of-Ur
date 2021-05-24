@@ -41,6 +41,7 @@ public class PhaseManager : MonoBehaviour
     public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
     public static event Action<PhaseManager> OnExitPieceMove;
+    public static event Action<PhaseManager> OnAITurnStart;
     #endregion
 
     private List<GameObject> playerFinishedPieces;
@@ -143,11 +144,10 @@ public class PhaseManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(switchPlayer.action.triggered)
+        if(switchPlayer.action.triggered) //Debug force to player turn
         {
             SwitchToPlayerTurn();
         }
-
 
         switch (playerState)
         {
@@ -193,12 +193,16 @@ public class PhaseManager : MonoBehaviour
                     worldState = WorldState.aiTurn;
 
                     OnExitPieceMove?.Invoke(this);
-                    OnPhaseChange?.Invoke(playerState.ToString());
+                    OnPhaseChange?.Invoke(playerState.ToString()); //for UI
                 }
+
+                //Handle if player has no valid move here
                 break;
 
             case PlayerState.Waiting:
                 //wait until AI/Other player finish their turn
+
+
                 if(worldState == WorldState.playerTurn)
                 {
                     if(playerState != PlayerState.Delay)
