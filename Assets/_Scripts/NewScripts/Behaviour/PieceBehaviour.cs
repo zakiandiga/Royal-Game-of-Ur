@@ -23,13 +23,13 @@ public class PieceBehaviour : MonoBehaviour
 
     #region MovementProperty
     private bool legalDrop = false;
-    private bool hasValidMove = false;
+    public bool hasValidMove = false;
     private bool isFinish = false;
     private int diceResult;
 
     //private List<int> squareIndexes;
-    private int currentSquare = 0;
-    private int legalIndex = 0;
+    public int currentSquare = 0;
+    public int targetSquare = 0;
     private int finishSquareIndex = 15;
     private string targetHit;
 
@@ -42,24 +42,26 @@ public class PieceBehaviour : MonoBehaviour
     #region Event Announcer
     public static event Action<string> OnPieceStateCheck;
 
-    public static event Action<int> OnMoveValidCheck;
+    public static event Action<int> OnHoveringPieces;
     public static event Action<PieceBehaviour> OnExitPieceCollider;
     public static event Action<string, bool> OnRaycastHit;
     public static event Action<bool> OnPieceDropped;
 
     public static event Action<GameObject> OnPieceFinish;
 
+    public static event Action<string> OnDebugText;
+
     #endregion
 
     #region Piece Type,Owner, and State
-    [SerializeField] private PieceOwner pieceOwner; //ASSIGN pieceOwner ON EDITOR
+    [SerializeField] private PieceOwner pieceOwner; //ASSIGN pieceOwner in editor
     public enum PieceOwner
     {
         Player,
         AI
     }
 
-    [SerializeField] private PieceType pieceType; //ASSIGN pieceType ON EDITOR
+    [SerializeField] private PieceType pieceType; //ASSIGN pieceType in editor
     public enum PieceType
     {
         Swallow,
@@ -105,7 +107,8 @@ public class PieceBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
-        PhaseManager.OnExitDiceRoll += DiceResultCheck;
+        //PhaseManager.OnExitDiceRoll += DiceResultCheck;
+        BoardManager.OnLegalMoveAvailable += ReadyingPiece;
         PhaseManager.OnExitPieceMove += PieceMoveConfirmed;
         HandPresence.OnEnterGrip += PieceGrabEnter;
         HandPresence.OnExitGrab += PieceGrabExit;
@@ -116,11 +119,17 @@ public class PieceBehaviour : MonoBehaviour
 
     private void OnDisable()
     {
-        PhaseManager.OnExitDiceRoll -= DiceResultCheck;
+        //PhaseManager.OnExitDiceRoll -= DiceResultCheck;
+        BoardManager.OnLegalMoveAvailable -= ReadyingPiece;
+        PhaseManager.OnExitPieceMove -= PieceMoveConfirmed;
+        HandPresence.OnEnterGrip -= PieceGrabEnter;
+        HandPresence.OnExitGrab -= PieceGrabExit;
 
         raycasting.action.Disable(); //temp
     }
 
+    #region old check legal move method
+    /*
     private void DiceResultCheck(int result)
     {
         diceResult = result;
@@ -132,19 +141,32 @@ public class PieceBehaviour : MonoBehaviour
     {
 
         
-    }
-       
+    }    
+    
     private void CheckLegalMove() //should be on PhaseManager or PlayerManager?
     {        
-        legalIndex = currentSquare + diceResult;
-        if(legalIndex > finishSquareIndex)
+        targetSquare = currentSquare + diceResult;
+        if(targetSquare > finishSquareIndex) //Temporary. 
         {
-            legalIndex = finishSquareIndex;
+            targetSquare = finishSquareIndex;
         }
 
         pieceState = PieceState.Ready;
         OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
         //Debug.Log("legal move = " + legalIndex);
+    }
+    */
+    #endregion
+
+    private void ReadyingPiece(int legalMoveAmount)
+    {
+        if(targetSquare > finishSquareIndex) //Temporary finish square handler
+        {
+            targetSquare = finishSquareIndex;
+        }
+
+        pieceState = PieceState.Ready;
+        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER (mainly to update UI)
 
     }
 
@@ -158,17 +180,20 @@ public class PieceBehaviour : MonoBehaviour
 
             //Debug.Log(this.gameObject.name + " is GRABBABLE");
 
-            OnMoveValidCheck?.Invoke(legalIndex); //Test, suppost to be on !hasValidMove
 
-            if (hasValidMove == false)
+            if (!hasValidMove)
             {
                 //notif the player, this.piece has no valid move!
+                Debug.Log("This piece has no valid move");
+                OnDebugText?.Invoke("This piece has no valid move");
             }
 
-            else
+            if (hasValidMove)
             {
+                OnHoveringPieces?.Invoke(targetSquare);
+                OnDebugText?.Invoke("This piece HAS A VALID MOVE");
                 //'Tell' board (PhaseManager) to green higlight legal square for this.piece
-                
+
             }                               
         }
     }
@@ -219,12 +244,12 @@ public class PieceBehaviour : MonoBehaviour
                 //Debug.Log("Hit on " + targetHitConvert);
                 
 
-                if(targetHitConvert == legalIndex)
+                if(targetHitConvert == targetSquare)
                 {
                     targetPosition = hit.transform.position;                    
                     OnRaycastHit?.Invoke(hit.transform.name, true);
                 }
-                else if (targetHitConvert != legalIndex)
+                else if (targetHitConvert != targetSquare)
                 {
                     OnRaycastHit?.Invoke(hit.transform.name, false);
                 }
@@ -250,10 +275,10 @@ public class PieceBehaviour : MonoBehaviour
         
     private void DropPiece()
     {
-        if (targetHit != legalIndex.ToString()) //illegal square drop
+        if (targetHit != targetSquare.ToString()) //illegal square drop
         {
             transform.rotation = defaultRotation;
-            transform.position = currentPosition;
+            transform.position = currentPosition; //Move the piece back to the current square
 
             legalDrop = false;
             Debug.Log("Illegal DROP");
@@ -264,7 +289,7 @@ public class PieceBehaviour : MonoBehaviour
             //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
         }
 
-        else if (targetHit == legalIndex.ToString()) //Legal square drop
+        else if (targetHit == targetSquare.ToString()) //Legal square drop
         {
             transform.rotation = defaultRotation;
 
@@ -286,7 +311,7 @@ public class PieceBehaviour : MonoBehaviour
                 OnPieceFinish?.Invoke(this.gameObject);
             }
 
-            this.currentSquare = legalIndex;
+            this.currentSquare = targetSquare; //Should check BoardManager for the latest square of this.piece
             OnPieceDropped?.Invoke(legalDrop);
 
             KickOpponentPiece(); 

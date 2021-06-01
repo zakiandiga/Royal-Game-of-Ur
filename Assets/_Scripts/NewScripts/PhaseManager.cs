@@ -37,6 +37,7 @@ public class PhaseManager : MonoBehaviour
 
     #region EventAnnouncer
     public static event Action<string> OnPhaseChange;
+    public static event Action<string> OnPlayerDelayCheck;
     public static event Action<PhaseManager> OnEnterDiceRoll;
     public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
@@ -60,16 +61,19 @@ public class PhaseManager : MonoBehaviour
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropped += PieceDropCheck;
         PieceBehaviour.OnPieceFinish += PieceFinishCheck;
+        AIAnimationStateMachine.AI_TurnFinished += SwitchToPlayerTurn;
 
         switchPlayer.action.Enable(); //TEMP
     }
 
-    private void OnDestroy()
+
+    private void OnDisable()
     {
         DiceBehaviour.OnDiceNumberResult -= DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropped -= PieceDropCheck;
         PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
+        AIAnimationStateMachine.AI_TurnFinished -= SwitchToPlayerTurn;
 
         switchPlayer.action.Disable(); //TEMP
     }
@@ -123,7 +127,7 @@ public class PhaseManager : MonoBehaviour
         pieceMoved = true;
     }
 
-    public void SwitchToPlayerTurn() //set to private when Skip AI Turn isn't used anymore
+    public void SwitchToPlayerTurn(string condition) //set to private when Skip AI Turn debug button isn't used anymore
     {
         worldState = WorldState.playerTurn;
     }
@@ -146,7 +150,7 @@ public class PhaseManager : MonoBehaviour
     {
         if(switchPlayer.action.triggered) //Debug force to player turn
         {
-            SwitchToPlayerTurn();
+            SwitchToPlayerTurn("DebugButton");
         }
 
         switch (playerState)
@@ -162,6 +166,8 @@ public class PhaseManager : MonoBehaviour
                     boolDiceThrown = false;
                 if (pieceMoved)
                     pieceMoved = false;
+                OnPlayerDelayCheck?.Invoke("PhaseManager");
+
                 //if all the clean up requirement met, exit to DiceRoll
                 if (!numberDiceThrown && !boolDiceThrown && !pieceMoved)
                 {

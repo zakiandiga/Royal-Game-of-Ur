@@ -1,9 +1,11 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class AIAnimationStateMachine : MonoBehaviour {
 
+    public static event Action<string> AI_TurnFinished;
     public AI_STATES state;
     public Animator anim;
 
@@ -616,6 +618,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 lerplighton = false;
                 lerplightoff = true;
                 state = AI_STATES.S_IKtoWAIT;
+
+                AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
                 break;
 
             case AI_STATES.S_IKtoWAIT:
@@ -679,8 +683,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     int rollDie()
     {
-        int die1 = Random.Range(0, 2);
-        int die2 = Random.Range(1, 5);
+        int die1 = UnityEngine.Random.Range(0, 2); //Modified to UnityEngine namespace
+        int die2 = UnityEngine.Random.Range(1, 5);
         
         int tempdie = -1;
         if (die1 == 1)
