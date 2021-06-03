@@ -12,7 +12,7 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: GameLabAU
+  companyName: Institute for IDEAS - American Univerisity
   productName: Royal Game of Ur
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
@@ -132,6 +132,7 @@ PlayerSettings:
   - {fileID: 0}
   - {fileID: 1793315176713355494, guid: 958bb38a6b925c04592ecdd732033c53, type: 2}
   - {fileID: 11400000, guid: 78413cce077a4f9448458ba90ecb320f, type: 2}
+  - {fileID: 0}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   m_HolographicPauseOnTrackingLoss: 1
@@ -398,7 +399,10 @@ PlayerSettings:
     m_GraphicsJobMode: 0
   - m_BuildTarget: XboxOnePlayer
     m_GraphicsJobMode: 0
-  m_BuildTargetGraphicsAPIs: []
+  m_BuildTargetGraphicsAPIs:
+  - m_BuildTarget: AndroidPlayer
+    m_APIs: 0b0000000800000015000000
+    m_Automatic: 1
   m_BuildTargetVRSettings:
   - m_BuildTarget: Standalone
     m_Enabled: 0
@@ -741,5 +745,5 @@ PlayerSettings:
   organizationId: 
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 1
-  disableOldInputManagerSupport: 1
+  disableOldInputManagerSupport: 0
   legacyClampBlendShapeWeights: 1

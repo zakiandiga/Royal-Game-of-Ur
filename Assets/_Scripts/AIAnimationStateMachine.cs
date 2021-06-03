@@ -162,7 +162,25 @@ public class AIAnimationStateMachine : MonoBehaviour {
         rest.GetComponent<BoxCollider>().size = new Vector3(.05f, .05f, .05f);
     }
 
-	void Update () {
+    private void OnEnable()
+    {
+        PhaseManager.OnPhaseChange += CheckTurn;
+    }
+
+    private void OnDisable()
+    {
+        PhaseManager.OnPhaseChange -= CheckTurn;
+    }
+
+    private void CheckTurn(string playerPhase)
+    {
+        if(playerPhase == "Waiting" && !aiturn)
+        {
+            aiturn = true;
+        }
+    }
+
+    void Update () {
         RightIKOffset = RightWrist.transform.position - RightHand.transform.position; //RightHand.transform.localPosition / 10;// RightWrist.transform.TransformPoint(RightHand.transform.localPosition) / 10;
         LeftIKOffset = LeftWrist.transform.position - LeftHand.transform.position; //LeftHand.transform.localPosition / 10;// LeftWrist.transform.TransformPoint(LeftHand.transform.localPosition) / 10;
         //Lerp
@@ -224,6 +242,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 if (aiturn)
                 {
+                    Debug.Log("AI Turn Start!");
                     state = AI_STATES.S_IKtoDICEGRAB;
                 }
                 break;
