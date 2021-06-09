@@ -19,12 +19,15 @@ public class BoardManager : MonoBehaviour
 
     public static event Action<bool, int> OnOccupiedSpace;
     public static event Action<int> OnLegalMoveAvailable;
+    public static event Action<bool, bool, bool> OnPieceDropHandlerDone;
     public static event Action<string> OnDebugText;
 
 
     private void Start()
     {
         legalMove = diceResult + currentSquareNumber; //test
+
+        
 
     }
 
@@ -34,8 +37,8 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnExitPieceCollider += ExitPieceCollider;
         PieceBehaviour.OnRaycastHit += SquareHitHandler;
         PieceBehaviour.OnPieceDropped += PieceDropHandler;
-        PhaseManager.OnExitDiceRoll += LegalCounter;
-        PhaseManager.OnPlayerDelayCheck += SquareDataCheck;
+        PhaseManager.OnExitDiceRoll += DiceRollObserver;
+        PhaseManager.OnPlayerDelayCheck += SquareTenantCheck;
     }
 
     private void OnDisable()
@@ -44,11 +47,11 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnExitPieceCollider -= ExitPieceCollider;
         PieceBehaviour.OnRaycastHit -= SquareHitHandler;
         PieceBehaviour.OnPieceDropped -= PieceDropHandler;
-        PhaseManager.OnExitDiceRoll -= LegalCounter;
-        PhaseManager.OnPlayerDelayCheck -= SquareDataCheck;
+        PhaseManager.OnExitDiceRoll -= DiceRollObserver;
+        PhaseManager.OnPlayerDelayCheck -= SquareTenantCheck;
     }
 
-    private void LegalCounter(int dice)
+    private void DiceRollObserver(int dice)
     {
         diceResult = dice;
         CheckPieceLegalMove();
@@ -82,14 +85,14 @@ public class BoardManager : MonoBehaviour
             }
 
             //Check if the target square doesn't have a player piece
-            if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant != SquareBehaviour.SquareTenant.Player)
+            if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant != SquareBehaviour.SquareTenant.White)
             {
                 legalMoveAmount += 1;
                 whitePieces[i].targetSquare = targetSquareIndex;
                 whitePieces[i].hasValidMove = true;
             }
 
-            if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant == SquareBehaviour.SquareTenant.Player)
+            if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant == SquareBehaviour.SquareTenant.White)
             {
                 whitePieces[i].hasValidMove = false;
             }
@@ -146,8 +149,8 @@ public class BoardManager : MonoBehaviour
             if(playerSquare[i].gameObject.name == squareName && isLegalSquare)
             {
                 MeshRenderer highlight = playerSquare[i].GetComponent<MeshRenderer>();
-                highlight.enabled = true;
                 highlight.material.color = Color.green;
+                highlight.enabled = true;
             }
 
             if(!isLegalSquare)
@@ -159,8 +162,29 @@ public class BoardManager : MonoBehaviour
     }
 
     //turn the square highlight off after the piece is dropped
-    private void PieceDropHandler(bool legalDrop) 
+    private void PieceDropHandler(bool legalDrop, int targetSquare) 
     {
+        var squareTenant = playerSquare[targetSquare].GetComponent<SquareBehaviour>().squareTenant;
+        bool isRosette = playerSquare[targetSquare].GetComponent<SquareBehaviour>().isRosette;
+        bool isFinish = playerSquare[targetSquare].GetComponent<SquareBehaviour>().isFinish;
+        bool isKicking;
+
+        if(legalDrop)
+        {
+            if(squareTenant == SquareBehaviour.SquareTenant.Black)
+            {
+                isKicking = true;
+                OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
+            }
+
+            if(squareTenant == SquareBehaviour.SquareTenant.Empty)
+            {
+                //drop casually
+                isKicking = false;
+                OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
+            }
+        }
+
         foreach (GameObject square in playerSquare)
         {
             MeshRenderer highlight = square.GetComponent<MeshRenderer>();
@@ -171,11 +195,11 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    public void SquareDataCheck(string source)
+    public void SquareTenantCheck(string source)
     {
         for (int i = 0; i < playerSquare.Count; ++i)
         {
-            playerSquare[i].GetComponent<SquareBehaviour>().CheckData();
+            playerSquare[i].GetComponent<SquareBehaviour>().CheckTenant();
         }
     }
 }

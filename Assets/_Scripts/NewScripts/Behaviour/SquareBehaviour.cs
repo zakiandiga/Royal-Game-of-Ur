@@ -14,6 +14,7 @@ public class SquareBehaviour : MonoBehaviour
     private Collider boxCollider;
 
     public bool isRosette;
+    public bool isFinish;
 
 
     private void Start()
@@ -23,8 +24,8 @@ public class SquareBehaviour : MonoBehaviour
 
     public enum SquareOwner
     {
-        Player,
-        AI,
+        White,
+        Black,
         Shared
     }
 
@@ -32,11 +33,11 @@ public class SquareBehaviour : MonoBehaviour
     public enum SquareTenant
     {
         Empty,
-        Player,
-        AI
+        White,
+        Black
     }
 
-    public void CheckData()
+    public void CheckTenant()
     {
         float range = 10f;
         float raycastOffset = -2f; //Y offset of the raycast origin
@@ -49,14 +50,14 @@ public class SquareBehaviour : MonoBehaviour
             if(hit.collider.gameObject.layer == 31) //31 = PlayerPiece layer
             {
                 Debug.Log(this.gameObject.name + " square occupied by a WHITE piece");
-                squareTenant = SquareTenant.Player;
+                squareTenant = SquareTenant.White;
             }
                 
 
             if(hit.collider.gameObject.layer == 30) //30 = AI piece layer
             {
                 Debug.Log(this.gameObject.name + " square occupied by a BLACK piece");
-                squareTenant = SquareTenant.AI;
+                squareTenant = SquareTenant.Black;
             }
                               
         }        

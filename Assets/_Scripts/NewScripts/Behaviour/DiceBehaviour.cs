@@ -35,13 +35,14 @@ public class DiceBehaviour : MonoBehaviour
     #region DiceState
     [SerializeField] private bool interactable; //modify from observer
 
-    [SerializeField] private DiceState diceState = DiceState.Idle;
+    [SerializeField] private DiceState diceState = DiceState.Ready;
     public enum DiceState
     {
-        Idle,
+        Ready,
         Grabable,
         OnHand,
-        Thrown
+        Thrown,
+        Waiting
     }
     #endregion
 
@@ -64,7 +65,7 @@ public class DiceBehaviour : MonoBehaviour
     {
         HandPresence.OnEnterGrip += DiceGrab;
         HandPresence.OnExitGrab += DiceThrow;
-        PhaseManager.OnEnterDiceRoll += InteractableOn;
+        PhaseManager.OnEnterDiceRoll += ReadyingDice;
         //PhaseManager.OnExitDiceRoll += InteractableOff;
     }
 
@@ -72,26 +73,24 @@ public class DiceBehaviour : MonoBehaviour
     {
         HandPresence.OnExitGrab -= DiceThrow;
         HandPresence.OnEnterGrip -= DiceGrab;
-        PhaseManager.OnEnterDiceRoll -= InteractableOn;
+        PhaseManager.OnEnterDiceRoll -= ReadyingDice;
         //PhaseManager.OnExitDiceRoll -= InteractableOff;
     }
 
     #region DiceInteractableSwitch
-    private void InteractableOn(PhaseManager phase)
+    private void ReadyingDice(PhaseManager phase)
     {
-        if(!interactable)
-        {
-            interactable = true;
+        if (!grabCollider.enabled)
             grabCollider.enabled = true;
-        }
-            
+        diceState = DiceState.Ready;
+          
     }
     
     #endregion
 
     public void GrabColliderEnter()
     {
-        if (diceState == DiceState.Idle)
+        if (diceState == DiceState.Ready)
         {
             diceState = DiceState.Grabable;            
             //Debug.Log(this.gameObject.name + " is GRABABLE");
@@ -103,7 +102,7 @@ public class DiceBehaviour : MonoBehaviour
     {
         if (diceState == DiceState.Grabable)
         {
-            diceState = DiceState.Idle;            
+            diceState = DiceState.Ready;            
             //Debug.Log(this.gameObject.name + " is NOT GRABABLE");
         }
 
@@ -112,7 +111,7 @@ public class DiceBehaviour : MonoBehaviour
 
     private void DiceGrab(HandPresence hand) //On dice grabbed
     {
-        if(diceState == DiceState.Grabable && interactable)
+        if(diceState == DiceState.Grabable) // && interactable)
         {
             diceState = DiceState.OnHand;
             Debug.Log(this.gameObject.name + " ON HAND");
@@ -218,7 +217,11 @@ public class DiceBehaviour : MonoBehaviour
 
         switch (diceState)
         {
-            case DiceState.Idle:
+            case DiceState.Waiting:
+                if (grabCollider.enabled)
+                    grabCollider.enabled = false;
+                break;
+            case DiceState.Ready:
                 //Things to Update() during idle
                 break;
             case DiceState.Grabable:
@@ -236,12 +239,9 @@ public class DiceBehaviour : MonoBehaviour
                 {                    
                     Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
                     this.DiceCheck();
-                    if (interactable)
-                    {
-                        this.interactable = false;
-                        this.grabCollider.enabled = false;
-                    }
-                    this.diceState = DiceState.Idle;
+
+                    this.grabCollider.enabled = false;
+                    this.diceState = DiceState.Waiting;
                 }
                 break;
 

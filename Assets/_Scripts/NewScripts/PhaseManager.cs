@@ -43,10 +43,13 @@ public class PhaseManager : MonoBehaviour
     public static event Action<PhaseManager> OnEnterPieceMove;
     public static event Action<PhaseManager> OnExitPieceMove;
     public static event Action<PhaseManager> OnAITurnStart;
+
+    public static event Action<string> OnDebugText;
     #endregion
 
     private List<GameObject> playerFinishedPieces;
     private int maxFinishedPiece = 5;
+    private int currentFinishedPiece = 0;
 
     #region Start/OnDestroy
     void Start()
@@ -59,7 +62,7 @@ public class PhaseManager : MonoBehaviour
     {
         DiceBehaviour.OnDiceNumberResult += DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
-        PieceBehaviour.OnPieceDropped += PieceDropCheck;
+        PieceBehaviour.OnPieceDropFinalized += PieceDropCheck;
         PieceBehaviour.OnPieceFinish += PieceFinishCheck;
         AIAnimationStateMachine.AI_TurnFinished += SwitchToPlayerTurn;
 
@@ -71,7 +74,7 @@ public class PhaseManager : MonoBehaviour
     {
         DiceBehaviour.OnDiceNumberResult -= DiceNumberResultCheck;
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
-        PieceBehaviour.OnPieceDropped -= PieceDropCheck;
+        PieceBehaviour.OnPieceDropFinalized -= PieceDropCheck;
         PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
         AIAnimationStateMachine.AI_TurnFinished -= SwitchToPlayerTurn;
 
@@ -117,9 +120,53 @@ public class PhaseManager : MonoBehaviour
     }
     #endregion
 
-    private void PieceDropCheck(bool legalDrop)
+    private void PieceDropCheck(bool legalDrop, bool isRosette)
     {
-        pieceMoved = legalDrop;
+        if(legalDrop)
+        {
+            if(!isRosette)
+            {
+                playerState = PlayerState.Waiting;
+                worldState = WorldState.aiTurn;
+
+                OnExitPieceMove?.Invoke(this);
+                OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+            }
+
+            else if(isRosette)
+            {
+                playerState = PlayerState.Delay;
+
+                OnExitPieceMove?.Invoke(this);
+                OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+            }
+        }
+        //pieceMoved = legalDrop;
+    }
+
+    private void PieceFinishCheck(GameObject piece)
+    {
+        OnDebugText?.Invoke(piece.gameObject.name + " just land on the finish square");
+        //playerFinishedPieces.Add(piece.gameObject);
+        currentFinishedPiece += 1;
+
+        if (currentFinishedPiece >= maxFinishedPiece)
+        {
+            Debug.Log("PLAYER WIN");
+            OnDebugText?.Invoke("Player WIN!!");
+            worldState = WorldState.playerWin;
+
+            //Win event
+        }
+
+        else if (currentFinishedPiece < maxFinishedPiece)
+        {
+            playerState = PlayerState.Waiting;
+            worldState = WorldState.aiTurn;
+
+            OnExitPieceMove?.Invoke(this);
+            OnPhaseChange?.Invoke(playerState.ToString());
+        }
     }
 
     private void PieceMoveCheck() //On piece moved
@@ -132,18 +179,7 @@ public class PhaseManager : MonoBehaviour
         worldState = WorldState.playerTurn;
     }
 
-    private void PieceFinishCheck(GameObject piece)
-    {
-        playerFinishedPieces.Add(piece);
 
-        if(playerFinishedPieces.Count >= maxFinishedPiece)
-        {
-            Debug.Log("PLAYER WIN");
-            worldState = WorldState.playerWin;
-
-            //Win event
-        }
-    }
 
     // Update is called once per frame
     void Update()
@@ -193,14 +229,7 @@ public class PhaseManager : MonoBehaviour
                 break;
 
             case PlayerState.PieceMove:
-                if(pieceMoved) //if piece moved legally
-                {
-                    playerState = PlayerState.Waiting;
-                    worldState = WorldState.aiTurn;
-
-                    OnExitPieceMove?.Invoke(this);
-                    OnPhaseChange?.Invoke(playerState.ToString()); //for UI
-                }
+                //handled by PieceDropCheck()
 
                 //Handle if player has no valid move here
                 break;

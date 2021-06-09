@@ -12,6 +12,7 @@ public class PieceGrabColliderBehaviour : MonoBehaviour
     {
         pieceBehaviour = GetComponentInParent<PieceBehaviour>();
         
+        
     }
 
     private void OnTriggerEnter(Collider other)

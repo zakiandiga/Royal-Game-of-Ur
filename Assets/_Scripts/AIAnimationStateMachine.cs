@@ -77,10 +77,10 @@ public class AIAnimationStateMachine : MonoBehaviour {
         S_IKtoDICETHROW3,
         S_IKtoDICETHROW4, 
         S_CALCULATETURN,
-        S_IKtoGRAB,
-        S_GRABBING,
+        S_IKtoPIECEGRAB, //Renamed from grab to piecegrab
+        S_PIECEGRABBING, //Renamed to PIECEGRABBING
         S_IKtoDROP,
-        S_DROPPING,
+        S_PIECEDROPPING, //Renamed to PIECEDROPPING
         S_IKtoWAIT
     };
 
@@ -523,16 +523,16 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     Debug.Log("ERROR: IK Obj Invalid index");
                 }*/
                 lookdestination = destination;
-                state = AI_STATES.S_IKtoGRAB;
+                state = AI_STATES.S_IKtoPIECEGRAB;
                 break;
 
-            case AI_STATES.S_IKtoGRAB:
+            case AI_STATES.S_IKtoPIECEGRAB:
 				if (lefthand)
 				{
 					if ((ltarget.transform.position - destination).magnitude < lerpoffset)
 					{
                         anim.SetBool("LeftGrab", true);
-                        state = AI_STATES.S_GRABBING;
+                        state = AI_STATES.S_PIECEGRABBING;
 					}
 				}
 				else
@@ -540,12 +540,12 @@ public class AIAnimationStateMachine : MonoBehaviour {
 					if ((rtarget.transform.position - destination).magnitude < lerpoffset)
 					{
                         anim.SetBool("RightGrab", true);
-                        state = AI_STATES.S_GRABBING;
+                        state = AI_STATES.S_PIECEGRABBING;
 					}
 				}
 				break;
 
-            case AI_STATES.S_GRABBING:
+            case AI_STATES.S_PIECEGRABBING:
                 board[aipiece] = turn.destination;
                 if (lefthand)
                 {
@@ -580,7 +580,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 					{
                         boardpieces[aipiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - LeftIKOffset;
                         anim.SetBool("LeftGrab", false);
-                        state = AI_STATES.S_DROPPING;
+                        state = AI_STATES.S_PIECEDROPPING;
 					}
 				}
 				else
@@ -590,12 +590,12 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     {
                         boardpieces[aipiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - RightIKOffset;
                         anim.SetBool("RightGrab", false);
-                        state = AI_STATES.S_DROPPING;
+                        state = AI_STATES.S_PIECEDROPPING;
 					}
 				}
 				break;
 
-            case AI_STATES.S_DROPPING:
+            case AI_STATES.S_PIECEDROPPING:
                 foreach (GameObject p in boardpieces)
                 {
                     p.GetComponent<Rigidbody>().isKinematic = false;
@@ -619,7 +619,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 lerplightoff = true;
                 state = AI_STATES.S_IKtoWAIT;
 
-                AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
+                
                 break;
 
             case AI_STATES.S_IKtoWAIT:
@@ -627,18 +627,21 @@ public class AIAnimationStateMachine : MonoBehaviour {
 				{
 					if ((ltarget.transform.position - destination).magnitude < lerpoffset)
 					{
+                        //AI drop on the rosette
                         if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14)
                         {
                             //AI reroll
                             state = AI_STATES.S_WAITING;
                             aiturn = true;
-                            lefthand = false;
+                            lefthand = false;                            
                         }
                         else
                         {
                             state = AI_STATES.S_WAITING;
                             aiturn = false;
                             lefthand = false;
+                            AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
+                            
                         }
                     }
 				}
@@ -658,8 +661,10 @@ public class AIAnimationStateMachine : MonoBehaviour {
                             state = AI_STATES.S_WAITING;
                             aiturn = false;
                             lefthand = false;
+                            AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
+
                         }
-					}
+                    }
 				}
                 break;
         }

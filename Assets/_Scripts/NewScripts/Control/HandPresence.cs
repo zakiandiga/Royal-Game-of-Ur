@@ -19,6 +19,7 @@ public class HandPresence : MonoBehaviour
     #region AdditionalComponent
     private Animator handAnimator;
 
+
     #endregion
 
     #region InputValues
@@ -58,7 +59,7 @@ public class HandPresence : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     private void TryInitialize()
@@ -165,6 +166,7 @@ public class HandPresence : MonoBehaviour
                     OnExitPinch?.Invoke(this);
                 }
                 handState = HandState.Idle;
+
                 HandGestureSwitch();
             }            
         }
@@ -179,6 +181,7 @@ public class HandPresence : MonoBehaviour
                     //Debug.Log(this.gameObject.name + " exits Grabbing");
                 }
                 handState = HandState.IsPinching;
+
                 HandGestureSwitch();
                 OnEnterPinch?.Invoke(this); //Enter pinch announcer
             }            
@@ -193,6 +196,7 @@ public class HandPresence : MonoBehaviour
                     OnExitPinch?.Invoke(this);
                 }
                 handState = HandState.IsGripping;
+
                 HandGestureSwitch();
                 OnEnterGrip?.Invoke(this);  //Enter grab announcer
                 //Debug.Log(this.gameObject.name + " enter Grabbing");
