@@ -1,0 +1,242 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1426756309678207677
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1426756309678207667}
+  - component: {fileID: 1426756309678207666}
+  - component: {fileID: 1426756309678207665}
+  - component: {fileID: 1426756309678207664}
+  - component: {fileID: 1426756309678207670}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1426756309678207667
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426756309678207677}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1426756309678207666
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426756309678207677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 876606967e6afa44bae8774d40f24f55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  anim: {fileID: 0}
+  opponent: {fileID: 0}
+  gameboardlabels: {fileID: 0}
+  depth: 1
+  playercam: {fileID: 0}
+  board: 01000000000000000000000000000000000000000000000000000000000000000000000000000000
+  boardpieces:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  boardspots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  dropspots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  blackdice:
+  - {fileID: 0}
+  - {fileID: 0}
+  piecerespawn:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  aiboolLight: {fileID: 0}
+  aiquadLight: {fileID: 0}
+  num0: {fileID: 2800000, guid: 5b695d03b61b43647bab521cd01f2675, type: 3}
+  num1: {fileID: 2800000, guid: 1bb48547fc625ec4ca87d1ff6430d75b, type: 3}
+  num2: {fileID: 2800000, guid: 28b67f08b70da2547bfad736d9a4a4d8, type: 3}
+  num3: {fileID: 2800000, guid: d6c7eaa9f3af3a74d986bc03b39ebcd6, type: 3}
+  num4: {fileID: 2800000, guid: f846bd04c66b80d4489a3354a0b56e36, type: 3}
+  lerplighton: 0
+  lerplightoff: 0
+  aiturn: 0
+  ltarget: {fileID: 0}
+  rtarget: {fileID: 0}
+  destination: {x: 0, y: 0, z: 0}
+  restingdestination: {x: 0, y: 0, z: 0}
+  looktarget: {fileID: 0}
+  lookdestination: {x: 0, y: 0, z: 0}
+  lefthand: 0
+  restingleft: {fileID: 0}
+  restingright: {fileID: 0}
+  RightWrist: {fileID: 0}
+  LeftWrist: {fileID: 0}
+  RightHand: {fileID: 0}
+  LeftHand: {fileID: 0}
+  lerpspeed: 2
+  dietarget1: {fileID: 0}
+  dietarget2: {fileID: 0}
+  dietarget3: {fileID: 0}
+  rollingdie: 0
+  die_lerpspped: 5
+  look_lerpspeed: 1
+  destoffset: {fileID: 0}
+  restoffset: {fileID: 0}
+  dest: {fileID: 0}
+  rest: {fileID: 0}
+--- !u!114 &1426756309678207665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426756309678207677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 328a7ab8fb1db884b95f7a09fb5c6168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  GameManager: {fileID: 0}
+  aistate: {fileID: 0}
+  Leap: {fileID: 0}
+  playerhands: {fileID: 0}
+  canmove: 0
+  canroll: 0
+  piece_placed: 0
+  dice_rolled: 0
+  reroll: 0
+  boolLight: {fileID: 0}
+  quadLight: {fileID: 0}
+  piece1Light: {fileID: 0}
+  piece2Light: {fileID: 0}
+  piece3Light: {fileID: 0}
+  piece4Light: {fileID: 0}
+  piece5Light: {fileID: 0}
+--- !u!114 &1426756309678207664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426756309678207677}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2b93ee7feb45e44bab744a523a84c33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DieRespawn: {fileID: 0}
+  PieceRespawn:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  boardspots:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  pieces:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  dice:
+  - {fileID: 0}
+  - {fileID: 0}
+  GameManager: {fileID: 1426756309678207677}
+  aistate: {fileID: 1426756309678207666}
+  blackdice:
+  - {fileID: 0}
+  - {fileID: 0}
+  BlackDieRespawn: {fileID: 0}
+  gameboard: {fileID: 0}
+  insidetriggers:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  its: []
+--- !u!114 &1426756309678207670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426756309678207677}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebaf26fcb86575c41a04cb9c8c8df02a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Button: 67
