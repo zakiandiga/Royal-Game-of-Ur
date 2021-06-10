@@ -5,11 +5,15 @@ using UnityEngine.UI;
 
 public class UI_Manager : MonoBehaviour
 {
+    public GameObject swallow, stormbird, raven, rooster, eagle;
+
     public Text turn;
     public Text phase;
     public Text dice;
 
     public Text pieceStateText;
+
+    //public Text swallowStateText, stormbirdStateText, ravenStateText, roosterStateText, eagleStateText;
 
     public Text debug;
 
@@ -39,10 +43,10 @@ public class UI_Manager : MonoBehaviour
         dice.text = "Dice Result: " + resultUI;
     }
 
-    private void PieceStateUpdate(string pieceState)
+    private void PieceStateUpdate(GameObject piece, string pieceState)
     {
         string currentPieceState = pieceState;
-        pieceStateText.text = "Piece State: " + pieceState;
+        pieceStateText.text = "Piece State: " + piece.name + " " + pieceState;
     }
 
     // Update is called once per frame

@@ -41,7 +41,7 @@ public class PieceBehaviour : MonoBehaviour
     [SerializeField] private InputActionReference raycasting; //temp
 
     #region Event Announcer
-    public static event Action<string> OnPieceStateCheck;
+    public static event Action<GameObject, string> OnPieceStateCheck;
 
     public static event Action<int> OnHoveringPieces;
     public static event Action<PieceBehaviour> OnExitPieceCollider;
@@ -74,7 +74,7 @@ public class PieceBehaviour : MonoBehaviour
         Eagle,
     }
 
-    private PieceState pieceState;
+    [SerializeField] private PieceState pieceState = PieceState.Waiting;
     public enum PieceState
     {
         Waiting,  //Pieces not interactable
@@ -103,8 +103,8 @@ public class PieceBehaviour : MonoBehaviour
         //diceResult = 3;
         //CheckLegalMove();
 
-        pieceState = PieceState.Dropped;
-        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+        pieceState = PieceState.Waiting;
+        OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
     }
 
@@ -168,10 +168,23 @@ public class PieceBehaviour : MonoBehaviour
             targetSquare = finishSquareIndex;
         }
 
+        if (onFinishSpot)
+        {
+            hasValidMove = false;
+            if (pieceState != PieceState.Finished)
+                pieceState = PieceState.Finished;
+        }
+
         if(hasValidMove || !onFinishSpot)
         {
             pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER (mainly to update UI)
+            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER (mainly to update UI)
+        }
+
+        if(!hasValidMove)
+        {
+            if (pieceState != PieceState.Waiting)
+                pieceState = PieceState.Waiting;
         }
         
 
@@ -195,7 +208,7 @@ public class PieceBehaviour : MonoBehaviour
             {
                 pieceState = PieceState.Grabable;
 
-                OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+                OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
                 
                 OnHoveringPieces?.Invoke(targetSquare);
                 OnDebugText?.Invoke("This piece HAS A VALID MOVE");
@@ -207,10 +220,10 @@ public class PieceBehaviour : MonoBehaviour
 
     public void GrabColliderExit()
     {
-        if (pieceState != PieceState.OnHand)
+        if (pieceState == PieceState.Grabable)
         {
             pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
             //Debug.Log(this.gameObject.name + " is NOT GRABBABLE");
 
@@ -225,7 +238,7 @@ public class PieceBehaviour : MonoBehaviour
         if (pieceState == PieceState.Grabable)
         {
             pieceState = PieceState.OnHand;
-            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
         }
     }
@@ -290,7 +303,7 @@ public class PieceBehaviour : MonoBehaviour
             Debug.Log("Illegal DROP");
 
             pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
             //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
         }
@@ -315,7 +328,6 @@ public class PieceBehaviour : MonoBehaviour
 
         if (!isKicking)
         {
-
             if (isFinish)
             {
                 //Polish, animate piece movement to goalSpawner
@@ -323,8 +335,7 @@ public class PieceBehaviour : MonoBehaviour
                 transform.position = targetPosition;
                 currentPosition = transform.position;
 
-                this.currentSquare = finishSquare;
-                pieceState = PieceState.Finished;
+                this.currentSquare = finishSquare;                
 
                 PieceFinishProcession();
             }
@@ -352,6 +363,7 @@ public class PieceBehaviour : MonoBehaviour
 
         bool isKicking = false;
         FinalizePieceDrop(isRosette, isKicking, false); //redo FinalizePieceDrop after kicking process done
+        //Finalize after kicking always pass false isFinish argument (isFinish piece never kick opponent pieces)
     }
 
     private void BackToStart()
@@ -361,16 +373,17 @@ public class PieceBehaviour : MonoBehaviour
 
     private void PieceFinishProcession()
     {
+        pieceState = PieceState.Finished;
         this.onFinishSpot = true;
         transform.position = goalSpawner.position;
-        currentPosition = transform.position;
+        currentPosition = transform.position; //Lock the piece position on the finish spot
         OnPieceFinish?.Invoke(this.gameObject);
     }
 
     private void PieceMoveConfirmed(PhaseManager phase)
     {
         pieceState = PieceState.Dropped;
-        OnPieceStateCheck?.Invoke(pieceState.ToString());  //PieceState ANNOUNCER
+        OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
     }
 
     private void MovePiece(Vector3 selectedSquare)
@@ -397,28 +410,39 @@ public class PieceBehaviour : MonoBehaviour
             RaycastingTest();
         }
 
-        if(pieceState == PieceState.Waiting)
+        switch (pieceState)
         {
-            if (grabCollider.enabled)
-                grabCollider.enabled = false;
-        }
+            case PieceState.Waiting:
+                if (grabCollider.enabled)
+                    grabCollider.enabled = false;
+                break;
 
-        if(pieceState == PieceState.OnHand)
-        {
-            RaycastingTest();
-        }
+            case PieceState.Ready:
+                if(pieceOwner == PieceOwner.Player)
+                {
+                    if (!grabCollider.enabled)
+                        grabCollider.enabled = true;
+                }
+                break;
 
-        if(pieceState == PieceState.Ready && pieceOwner == PieceOwner.Player)
-        {
-            if (!grabCollider.enabled)
-                grabCollider.enabled = true;
-        }
+            case PieceState.OnHand:
+                RaycastingTest();
+                break;
 
-        if(pieceState == PieceState.Dropped || onFinishSpot)
-        {
-            if (grabCollider.enabled)
-                grabCollider.enabled = false;
+            case PieceState.Dropped:
+                if (grabCollider.enabled)
+                    grabCollider.enabled = false;
+                break;
+
+            case PieceState.Finished:
+                if (onFinishSpot)
+                {
+                    if (grabCollider.enabled)
+                        grabCollider.enabled = false;
+                }
+                break;
         }
+        
     }
 
         //Waiting,  //Pieces not interactable

@@ -42642,6 +42642,12 @@ Transform:
   m_Father: {fileID: 31439118}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &964241517 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+    type: 3}
+  m_PrefabInstance: {fileID: 2002003770}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &964756409
 GameObject:
   m_ObjectHideFlags: 0
@@ -96601,6 +96607,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1745725394}
   m_Mesh: {fileID: 4300000, guid: dda55500b6f7bd94bb7705adb757475a, type: 3}
+--- !u!1 &1751477680 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8089614824722154704, guid: 503fbff2053e5ee40a4a259534d2e010,
+    type: 3}
+  m_PrefabInstance: {fileID: 1397149483}
+  m_PrefabAsset: {fileID: 0}
 --- !u!64 &1752009072
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -108017,12 +108029,12 @@ PrefabInstance:
         type: 3}
       propertyPath: boardpieces.Array.data[6]
       value: 
-      objectReference: {fileID: 735154383}
+      objectReference: {fileID: 1751477680}
     - target: {fileID: 1426756309678207666, guid: 023cd4848ad9c2c41856817dd19e1e23,
         type: 3}
       propertyPath: boardpieces.Array.data[7]
       value: 
-      objectReference: {fileID: 1304574784}
+      objectReference: {fileID: 964241517}
     - target: {fileID: 1426756309678207666, guid: 023cd4848ad9c2c41856817dd19e1e23,
         type: 3}
       propertyPath: boardpieces.Array.data[8]
@@ -108488,6 +108500,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2021737372835710447, guid: ac93d130c9d45924a8e62fd930fdc5d0,
         type: 3}
+      propertyPath: isRosette
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2021737372835710447, guid: ac93d130c9d45924a8e62fd930fdc5d0,
+        type: 3}
       propertyPath: checkerLayerMask.m_Bits
       value: 3221225472
       objectReference: {fileID: 0}
@@ -108530,6 +108547,11 @@ PrefabInstance:
         type: 3}
       propertyPath: checkerLayerMask.m_Bits
       value: 3221225472
+      objectReference: {fileID: 0}
+    - target: {fileID: 2021737373277008693, guid: ac93d130c9d45924a8e62fd930fdc5d0,
+        type: 3}
+      propertyPath: isRosette
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2021737373277008693, guid: ac93d130c9d45924a8e62fd930fdc5d0,
         type: 3}
@@ -109012,6 +109034,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b403c97f00a1c904faade94d62e4327a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  swallow: {fileID: 2087965878}
+  stormbird: {fileID: 735154383}
+  raven: {fileID: 1304574784}
+  rooster: {fileID: 209541379}
+  eagle: {fileID: 7232705084787402346}
   turn: {fileID: 2337611622263097588}
   phase: {fileID: 2337611622125966011}
   dice: {fileID: 2337611623193155837}
@@ -109967,6 +109994,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5664134474777843048, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5664134474777843048, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
@@ -109985,6 +110017,21 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 602321481}
+    - target: {fileID: 5664134475142008908, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5664134475142008908, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_CollisionDetection
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5664134475142008911, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5061b2acf0e7494eb737a293459db62, type: 3}
 --- !u!1001 &7232705084787402345
