@@ -5743,6 +5743,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
+      propertyPath: pieceOwner
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
       propertyPath: goalSpawner
       value: 
       objectReference: {fileID: 713227565}
@@ -60194,6 +60199,11 @@ PrefabInstance:
       objectReference: {fileID: 876359698}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
+      propertyPath: pieceOwner
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
       propertyPath: goalSpawner
       value: 
       objectReference: {fileID: 838195603}
@@ -71890,6 +71900,11 @@ PrefabInstance:
       objectReference: {fileID: 876359698}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
+      propertyPath: pieceOwner
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
       propertyPath: goalSpawner
       value: 
       objectReference: {fileID: 2141643535}
@@ -72171,6 +72186,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Black Piece Swallow
+      objectReference: {fileID: 0}
+    - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: pieceOwner
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
@@ -104919,6 +104939,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: pieceOwner
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: goalSpawner
