@@ -5671,6 +5671,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1940841871}
     m_Modifications:
+    - target: {fileID: 7232705085601327460, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336067, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -5679,7 +5684,7 @@ PrefabInstance:
     - target: {fileID: 7232705085712336076, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: m_RootOrder
-      value: 19
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336076, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
@@ -5738,6 +5743,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336077, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7232705085712336077, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
       propertyPath: m_TagString
       value: eagle
       objectReference: {fileID: 0}
@@ -5755,7 +5765,12 @@ PrefabInstance:
         type: 3}
       propertyPath: startSpawner
       value: 
-      objectReference: {fileID: 1040552774}
+      objectReference: {fileID: 1245250854}
+    - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336079, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: m_InteractionManager
@@ -7474,6 +7489,36 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!1 &171789851
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 171789852}
+  m_Layer: 0
+  m_Name: StartSpawn StormbirdBlack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &171789852
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 171789851}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.05266664, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 492028856}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &171952980
 GameObject:
   m_ObjectHideFlags: 0
@@ -21079,6 +21124,36 @@ Transform:
   m_Father: {fileID: 586681220}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &432830325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 432830326}
+  m_Layer: 0
+  m_Name: StartSpawn SwallowBlack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &432830326
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 432830325}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.11493328, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 492028856}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &433136119
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -21326,6 +21401,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bcd03e00992e084c8be61565d44b8bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &437475938
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 437475939}
+  m_Layer: 0
+  m_Name: StartSpawn RoosterBlack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &437475939
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437475938}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.05573326, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 492028856}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &438441996 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2021737372018121190, guid: ac93d130c9d45924a8e62fd930fdc5d0,
@@ -21353,6 +21458,36 @@ MonoBehaviour:
   isRosette: 0
   isFinish: 0
   squareTenant: 0
+--- !u!1 &440177523
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 440177524}
+  m_Layer: 0
+  m_Name: StartSpawn RavenBlack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &440177524
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 440177523}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 492028856}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &440885579
 GameObject:
   m_ObjectHideFlags: 0
@@ -22276,6 +22411,41 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &492028855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 492028856}
+  m_Layer: 0
+  m_Name: StartSpawn Black Parent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &492028856
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 492028855}
+  m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0.529, y: 0.8964, z: 2.015}
+  m_LocalScale: {x: 1.5, y: 1.5000008, z: 0.25}
+  m_Children:
+  - {fileID: 432830326}
+  - {fileID: 171789852}
+  - {fileID: 440177524}
+  - {fileID: 437475939}
+  - {fileID: 1245250854}
+  m_Father: {fileID: 1940841871}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &494250614
 GameObject:
   m_ObjectHideFlags: 0
@@ -23131,7 +23301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 602321481}
   m_Layer: 0
-  m_Name: StartSpawn Swallow
+  m_Name: StartSpawn SwallowWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -23220,7 +23390,7 @@ GameObject:
   m_Component:
   - component: {fileID: 611062591}
   m_Layer: 0
-  m_Name: StartSpawn Stormbird
+  m_Name: StartSpawn StormbirdWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41958,7 +42128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 900802921}
   m_Layer: 0
-  m_Name: StartSpawn Rooster
+  m_Name: StartSpawn RoosterWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -57741,7 +57911,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1040552774}
   m_Layer: 0
-  m_Name: StartSpawn Eagle
+  m_Name: StartSpawn EagleWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -60198,6 +60368,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1940841871}
     m_Modifications:
+    - target: {fileID: 7817868859787471297, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026336, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: m_InteractionManager
@@ -60217,7 +60392,12 @@ PrefabInstance:
         type: 3}
       propertyPath: startSpawner
       value: 
-      objectReference: {fileID: 900802921}
+      objectReference: {fileID: 437475939}
+    - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026340, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -60230,13 +60410,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026350, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7817868860104026350, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
       propertyPath: m_TagString
       value: rooster
       objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026351, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: m_RootOrder
-      value: 18
+      value: 19
       objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026351, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
@@ -60511,6 +60696,36 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 2021737372456550890}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1245250853
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1245250854}
+  m_Layer: 0
+  m_Name: StartSpawn EagleBlack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1245250854
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1245250853}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.10440004, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 492028856}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1248599059
 GameObject:
   m_ObjectHideFlags: 0
@@ -71829,6 +72044,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1940841871}
     m_Modifications:
+    - target: {fileID: 8089614824677517987, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154702, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -71841,13 +72061,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154704, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8089614824722154704, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
       propertyPath: m_TagString
       value: stormbird
       objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154705, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: m_RootOrder
-      value: 16
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154705, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
@@ -71918,7 +72143,12 @@ PrefabInstance:
         type: 3}
       propertyPath: startSpawner
       value: 
-      objectReference: {fileID: 611062591}
+      objectReference: {fileID: 171789852}
+    - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 503fbff2053e5ee40a4a259534d2e010, type: 3}
 --- !u!4 &1397149484 stripped
@@ -72131,7 +72361,7 @@ PrefabInstance:
     - target: {fileID: 5664134474777676107, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 5664134474777676107, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
@@ -72193,6 +72423,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Black Piece Swallow
       objectReference: {fileID: 0}
+    - target: {fileID: 5664134474777843051, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: pieceOwner
@@ -72207,7 +72442,17 @@ PrefabInstance:
         type: 3}
       propertyPath: startSpawner
       value: 
-      objectReference: {fileID: 602321481}
+      objectReference: {fileID: 432830326}
+    - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
+    - target: {fileID: 5664134476747050023, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5061b2acf0e7494eb737a293459db62, type: 3}
 --- !u!4 &1404782249 stripped
@@ -99497,6 +99742,7 @@ Transform:
   - {fileID: 1266987490}
   - {fileID: 1116473489}
   - {fileID: 1508818765}
+  - {fileID: 492028856}
   - {fileID: 1963087777}
   - {fileID: 1386545985}
   - {fileID: 1592764109}
@@ -104645,7 +104891,7 @@ Transform:
   - {fileID: 838195603}
   - {fileID: 713227565}
   m_Father: {fileID: 1940841871}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1965623404
 GameObject:
@@ -104946,6 +105192,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1940841871}
     m_Modifications:
+    - target: {fileID: 3851121465585719094, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384672, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: m_InteractionManager
@@ -104965,11 +105216,21 @@ PrefabInstance:
         type: 3}
       propertyPath: startSpawner
       value: 
-      objectReference: {fileID: 2091697458}
+      objectReference: {fileID: 440177524}
+    - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: m_Name
       value: Black Piece Raven
+      objectReference: {fileID: 0}
+    - target: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: m_Layer
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
@@ -104979,7 +105240,7 @@ PrefabInstance:
     - target: {fileID: 3851121466429384675, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 17
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384675, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
@@ -106240,7 +106501,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2091697458}
   m_Layer: 0
-  m_Name: StartSpawn Raven
+  m_Name: StartSpawn RavenWhite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109709,6 +109970,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 2091697458}
+    - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 1073741824
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384674, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: m_Name
@@ -109722,7 +109988,7 @@ PrefabInstance:
     - target: {fileID: 3851121466429384675, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 12
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384675, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
@@ -109940,7 +110206,7 @@ PrefabInstance:
     - target: {fileID: 5664134474777676107, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_RootOrder
-      value: 10
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 5664134474777676107, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
@@ -110017,15 +110283,20 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 602321481}
+    - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 1073741824
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008908, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_Interpolate
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008908, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_CollisionDetection
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008911, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
@@ -110044,7 +110315,7 @@ PrefabInstance:
     - target: {fileID: 7232705085712336076, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: m_RootOrder
-      value: 14
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336076, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
@@ -110116,6 +110387,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 1040552774}
+    - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 1073741824
+      objectReference: {fileID: 0}
     - target: {fileID: 7232705085712336079, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
       propertyPath: m_InteractionManager
@@ -110163,6 +110439,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 900802921}
+    - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 1073741824
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026350, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: m_Name
@@ -110176,7 +110457,7 @@ PrefabInstance:
     - target: {fileID: 7817868860104026351, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: m_RootOrder
-      value: 13
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026351, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
@@ -110250,7 +110531,7 @@ PrefabInstance:
     - target: {fileID: 8089614824722154705, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154705, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
@@ -110317,5 +110598,10 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 611062591}
+    - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: opponentHitMask.m_Bits
+      value: 1073741824
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 503fbff2053e5ee40a4a259534d2e010, type: 3}

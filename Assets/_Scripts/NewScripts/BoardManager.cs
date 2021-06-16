@@ -102,6 +102,9 @@ public class BoardManager : MonoBehaviour
         if (legalMoveAmount <= 0)
         {
             //tell piece behaviour that there is no legal move, skip state to PieceState.Dropped
+            OnLegalMoveAvailable?.Invoke(legalMoveAmount);
+            //tell UI to display 'No legal move available' info
+            OnDebugText?.Invoke("No legal move available");
         }
 
         if(legalMoveAmount > 0)

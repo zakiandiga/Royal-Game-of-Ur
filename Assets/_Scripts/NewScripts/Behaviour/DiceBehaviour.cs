@@ -243,6 +243,8 @@ public class DiceBehaviour : MonoBehaviour
                     this.grabCollider.enabled = false;
                     this.diceState = DiceState.Waiting;
                 }
+                if (grabCollider.enabled)
+                    grabCollider.enabled = false;
                 break;
 
         }

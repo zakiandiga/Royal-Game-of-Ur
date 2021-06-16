@@ -64,6 +64,7 @@ public class PhaseManager : MonoBehaviour
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropFinalized += PieceDropCheck;
         PieceBehaviour.OnPieceFinish += PieceFinishCheck;
+        BoardManager.OnLegalMoveAvailable += SkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished += SwitchToPlayerTurn;
 
         switchPlayer.action.Enable(); //TEMP
@@ -76,6 +77,7 @@ public class PhaseManager : MonoBehaviour
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropFinalized -= PieceDropCheck;
         PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
+        BoardManager.OnLegalMoveAvailable -= SkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished -= SwitchToPlayerTurn;
 
         switchPlayer.action.Disable(); //TEMP
@@ -119,6 +121,18 @@ public class PhaseManager : MonoBehaviour
         Debug.Log("Total Dice result = " + totalDiceResult);
     }
     #endregion
+
+    private void SkipPieceMove(int legalMoveAmount)
+    {
+        if(legalMoveAmount <= 0)
+        {
+            playerState = PlayerState.Waiting;
+            worldState = WorldState.aiTurn;
+
+            OnExitPieceMove?.Invoke(this);
+            OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+        }
+    }
 
     private void PieceDropCheck(bool legalDrop, bool isRosette)
     {

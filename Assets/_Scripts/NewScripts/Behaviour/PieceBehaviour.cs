@@ -9,6 +9,7 @@ public class PieceBehaviour : MonoBehaviour
 {
     #region PhysicalProperty
     private Rigidbody rb;
+    private BoxCollider pieceCollider;
     private SphereCollider grabCollider;
     [SerializeField] private Transform startSpawner;
     [SerializeField] private Transform goalSpawner;
@@ -19,6 +20,7 @@ public class PieceBehaviour : MonoBehaviour
     private Vector3 targetPosition; //vector3 of piece's landing snap position
     private Quaternion defaultRotation;
     [SerializeField] private LayerMask pieceHitMask;
+    [SerializeField] private LayerMask opponentHitMask;
     #endregion
 
     #region MovementProperty
@@ -91,6 +93,7 @@ public class PieceBehaviour : MonoBehaviour
     void Start()
     {    
         rb = GetComponent<Rigidbody>();
+        pieceCollider = GetComponent<BoxCollider>();
         grabCollider = GetComponentInChildren<SphereCollider>();
 
         grabCollider.enabled = false;
@@ -111,24 +114,21 @@ public class PieceBehaviour : MonoBehaviour
     private void OnEnable()
     {
         //PhaseManager.OnExitDiceRoll += DiceResultCheck;
-        BoardManager.OnLegalMoveAvailable += ReadyingPiece;
-        PhaseManager.OnExitPieceMove += PieceMoveConfirmed;
+        BoardManager.OnLegalMoveAvailable += ReadyingPiece;        
         HandPresence.OnEnterGrip += PieceGrabEnter;
         HandPresence.OnExitGrab += PieceGrabExit;
 
-
-        raycasting.action.Enable(); //temp
+        raycasting.action.Enable(); //temp, testing raycast with button
     }
 
     private void OnDisable()
     {
         //PhaseManager.OnExitDiceRoll -= DiceResultCheck;
-        BoardManager.OnLegalMoveAvailable -= ReadyingPiece;
-        PhaseManager.OnExitPieceMove -= PieceMoveConfirmed;
+        BoardManager.OnLegalMoveAvailable -= ReadyingPiece;        
         HandPresence.OnEnterGrip -= PieceGrabEnter;
         HandPresence.OnExitGrab -= PieceGrabExit;
 
-        raycasting.action.Disable(); //temp
+        raycasting.action.Disable(); //temp, testing raycast with button
     }
 
     #region old check legal move method
@@ -163,40 +163,56 @@ public class PieceBehaviour : MonoBehaviour
 
     private void ReadyingPiece(int legalMoveAmount)
     {
-        if(targetSquare > finishSquareIndex) //Temporary finish square handler
+        PhaseManager.OnExitPieceMove += PieceMoveConfirmed;
+
+        if (legalMoveAmount <= 0)
         {
-            targetSquare = finishSquareIndex;
+            if(!onFinishSpot)
+            {
+                if (pieceState != PieceState.Waiting)
+                    pieceState = PieceState.Waiting;
+            }
+
+            if (onFinishSpot)
+            {
+                hasValidMove = false;
+                if (pieceState != PieceState.Finished)
+                    pieceState = PieceState.Finished;
+            }
         }
 
-        if (onFinishSpot)
+        if(legalMoveAmount > 0)
         {
-            hasValidMove = false;
-            if (pieceState != PieceState.Finished)
-                pieceState = PieceState.Finished;
-        }
+            if (targetSquare > finishSquareIndex) //Temporary finish square handler
+            {
+                targetSquare = finishSquareIndex;
+            }
 
-        if(hasValidMove || !onFinishSpot)
-        {
-            pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER (mainly to update UI)
-        }
+            if (hasValidMove || !onFinishSpot)
+            {
+                pieceState = PieceState.Ready;
+                OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER (mainly to update UI)
+            }
 
-        if(!hasValidMove)
-        {
-            if (pieceState != PieceState.Waiting)
-                pieceState = PieceState.Waiting;
-        }
-        
+            if (onFinishSpot)
+            {
+                hasValidMove = false;
+                if (pieceState != PieceState.Finished)
+                    pieceState = PieceState.Finished;
+            }
 
+            if (!hasValidMove)
+            {
+                if (pieceState != PieceState.Waiting)
+                    pieceState = PieceState.Waiting;
+            }
+        }     
     }
 
     public void GrabColliderEnter()
     {
         if (pieceState == PieceState.Ready)
         {
-            //Debug.Log(this.gameObject.name + " is GRABBABLE");
-
-
             if (!hasValidMove)
             {
                 //notif the player, this.piece has no valid move!
@@ -213,7 +229,6 @@ public class PieceBehaviour : MonoBehaviour
                 OnHoveringPieces?.Invoke(targetSquare);
                 OnDebugText?.Invoke("This piece HAS A VALID MOVE");
                 //'Tell' board (PhaseManager) to green higlight legal square for this.piece
-
             }                               
         }
     }
@@ -238,6 +253,11 @@ public class PieceBehaviour : MonoBehaviour
         if (pieceState == PieceState.Grabable)
         {
             pieceState = PieceState.OnHand;
+            if(pieceState == PieceState.OnHand && pieceCollider.enabled)            
+            {
+                pieceCollider.enabled = false;
+            }
+
             OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
         }
@@ -281,13 +301,14 @@ public class PieceBehaviour : MonoBehaviour
     }
 
     public void PieceGrabExit(HandPresence hand)
-    {
-        
+    {        
         //Landing at square handler
         //float lerpTime = 0.5f;
         if(pieceState == PieceState.OnHand)
         {
-            //Vector3 releasePosition = transform.position;
+            if (!pieceCollider.enabled)
+                pieceCollider.enabled = true;
+
             DropPiece();
         }        
     }
@@ -325,6 +346,7 @@ public class PieceBehaviour : MonoBehaviour
     private void FinalizePieceDrop(bool isRosette, bool isKicking, bool isFinish)
     {
         BoardManager.OnPieceDropHandlerDone -= FinalizePieceDrop;
+        
 
         if (!isKicking)
         {
@@ -361,6 +383,23 @@ public class PieceBehaviour : MonoBehaviour
     {
         Debug.Log("If opponent's piece is here, kick it!");
 
+        float range = 500f;
+        GameObject hitResult = null;
+        Ray ray = new Ray(transform.position, Vector3.down);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, range, opponentHitMask))
+        {
+            hitResult = hit.collider.gameObject;
+            PieceBehaviour opponentPiece = hitResult.GetComponent<PieceBehaviour>();
+            OnDebugText?.Invoke("Kick a piece: " + hitResult.name);
+
+            if (hitResult != null)
+            {
+                opponentPiece.BackToStart();
+            }
+        }
+
         bool isKicking = false;
         FinalizePieceDrop(isRosette, isKicking, false); //redo FinalizePieceDrop after kicking process done
         //Finalize after kicking always pass false isFinish argument (isFinish piece never kick opponent pieces)
@@ -368,7 +407,12 @@ public class PieceBehaviour : MonoBehaviour
 
     private void BackToStart()
     {
-        //observe OnOpponentAttack() to put piece bact to start position
+        //triggered from KickOpponentPiece()
+        transform.position = this.startSpawner.position;
+                
+        //Polish notes: 
+        //Animate the kicking sequence
+        //Tell UI to show the info
     }
 
     private void PieceFinishProcession()
@@ -382,7 +426,11 @@ public class PieceBehaviour : MonoBehaviour
 
     private void PieceMoveConfirmed(PhaseManager phase)
     {
-        pieceState = PieceState.Dropped;
+        PhaseManager.OnExitPieceMove -= PieceMoveConfirmed;
+
+        if(pieceState != PieceState.Finished)
+            pieceState = PieceState.Waiting;
+
         OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
     }
 
@@ -425,8 +473,8 @@ public class PieceBehaviour : MonoBehaviour
                 }
                 break;
 
-            case PieceState.OnHand:
-                RaycastingTest();
+            case PieceState.OnHand:                
+                RaycastingTest();                
                 break;
 
             case PieceState.Dropped:
