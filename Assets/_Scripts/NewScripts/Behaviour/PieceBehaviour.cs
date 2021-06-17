@@ -8,9 +8,13 @@ using UnityEngine.InputSystem;
 public class PieceBehaviour : MonoBehaviour
 {
     #region PhysicalProperty
+    private PieceGrabInteractable grabControl;
     private Rigidbody rb;
     private BoxCollider pieceCollider;
     private SphereCollider grabCollider;
+    [SerializeField] private LayerMask interactableOn;
+    [SerializeField] private LayerMask interactableOff;
+
     [SerializeField] private Transform startSpawner;
     [SerializeField] private Transform goalSpawner;
 
@@ -91,13 +95,12 @@ public class PieceBehaviour : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {    
+    {
+        grabControl = GetComponent<PieceGrabInteractable>();
         rb = GetComponent<Rigidbody>();
         pieceCollider = GetComponent<BoxCollider>();
         grabCollider = GetComponentInChildren<SphereCollider>();
-
-        grabCollider.enabled = false;
-        
+     
         currentPosition = startSpawner.position;
         defaultRotation = transform.rotation;
 
@@ -238,7 +241,7 @@ public class PieceBehaviour : MonoBehaviour
         if (pieceState == PieceState.Grabable)
         {
             pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
+            //OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
 
             //Debug.Log(this.gameObject.name + " is NOT GRABBABLE");
 
@@ -461,15 +464,19 @@ public class PieceBehaviour : MonoBehaviour
         switch (pieceState)
         {
             case PieceState.Waiting:
-                if (grabCollider.enabled)
-                    grabCollider.enabled = false;
+                if (grabControl.interactionLayerMask != interactableOff)
+                {
+                    grabControl.interactionLayerMask = interactableOff;
+                }
                 break;
 
             case PieceState.Ready:
                 if(pieceOwner == PieceOwner.Player)
                 {
-                    if (!grabCollider.enabled)
-                        grabCollider.enabled = true;
+                    if (grabControl.interactionLayerMask != interactableOn)
+                    {
+                        grabControl.interactionLayerMask = interactableOn;
+                    }
                 }
                 break;
 
@@ -478,15 +485,19 @@ public class PieceBehaviour : MonoBehaviour
                 break;
 
             case PieceState.Dropped:
-                if (grabCollider.enabled)
-                    grabCollider.enabled = false;
+                if (grabControl.interactionLayerMask != interactableOff)
+                {
+                    grabControl.interactionLayerMask = interactableOff;
+                }
                 break;
 
             case PieceState.Finished:
                 if (onFinishSpot)
                 {
-                    if (grabCollider.enabled)
-                        grabCollider.enabled = false;
+                    if (grabControl.interactionLayerMask != interactableOff)
+                    {
+                        grabControl.interactionLayerMask = interactableOff;
+                    }
                 }
                 break;
         }

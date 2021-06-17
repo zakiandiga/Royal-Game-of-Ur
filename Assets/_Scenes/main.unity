@@ -5768,6 +5768,11 @@ PrefabInstance:
       objectReference: {fileID: 1245250854}
     - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
       propertyPath: opponentHitMask.m_Bits
       value: 2147483648
       objectReference: {fileID: 0}
@@ -5776,6 +5781,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 7232705085712336079, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a91cc454084c0274f861a1660e03fbee, type: 3}
 --- !u!4 &56109645 stripped
@@ -5975,6 +5985,84 @@ Transform:
   m_Father: {fileID: 1607313740}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &91654510
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 91654511}
+  - component: {fileID: 91654514}
+  - component: {fileID: 91654513}
+  m_Layer: 5
+  m_Name: BoolDiceMonitor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &91654511
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91654510}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_Children: []
+  m_Father: {fileID: 2337611622097280957}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 124, y: 45.5}
+  m_SizeDelta: {x: 272.53, y: 105.71767}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &91654513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91654510}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 29
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 47
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: BoolDice
+--- !u!222 &91654514
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 91654510}
+  m_CullTransparentMesh: 0
 --- !u!1 &93174533
 GameObject:
   m_ObjectHideFlags: 0
@@ -20425,6 +20513,7 @@ GameObject:
   - component: {fileID: 401220938}
   - component: {fileID: 401220940}
   - component: {fileID: 401220939}
+  - component: {fileID: 401220941}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Hand
@@ -20544,6 +20633,18 @@ MonoBehaviour:
   m_PlayHapticsOnHoverExited: 0
   m_HapticHoverExitIntensity: 0
   m_HapticHoverExitDuration: 0
+--- !u!114 &401220941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401220936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06e13728ab966b540818dc80550ca997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &402933220
 GameObject:
   m_ObjectHideFlags: 0
@@ -60378,6 +60479,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 7817868860104026336, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: pieceOwner
@@ -60393,6 +60499,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 437475939}
+    - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -72129,6 +72240,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 8089614824722154706, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: pieceOwner
@@ -72144,6 +72260,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 171789852}
+    - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -72418,6 +72539,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 5664134474777843048, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134474777843051, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_Name
@@ -72443,6 +72569,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 432830326}
+    - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -72948,6 +73079,7 @@ GameObject:
   - component: {fileID: 1426069898}
   - component: {fileID: 1426069900}
   - component: {fileID: 1426069899}
+  - component: {fileID: 1426069901}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Hand
@@ -73067,6 +73199,18 @@ MonoBehaviour:
   m_PlayHapticsOnHoverExited: 0
   m_HapticHoverExitIntensity: 0
   m_HapticHoverExitDuration: 0
+--- !u!114 &1426069901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426069896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06e13728ab966b540818dc80550ca997, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1427292843 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2021737373346644801, guid: ac93d130c9d45924a8e62fd930fdc5d0,
@@ -105202,6 +105346,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 3851121466429384672, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: pieceOwner
@@ -105217,6 +105366,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 440177524}
+    - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -107353,6 +107507,90 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!1 &2120933280 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 306500563720611329, guid: 95a629a533f9c3640985b95b8d329cf2,
+    type: 3}
+  m_PrefabInstance: {fileID: 5271249273262606730}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2121132091
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2121132092}
+  - component: {fileID: 2121132095}
+  - component: {fileID: 2121132094}
+  m_Layer: 5
+  m_Name: NumDiceMonitor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2121132092
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121132091}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_Children: []
+  m_Father: {fileID: 2337611622097280957}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 124, y: -11}
+  m_SizeDelta: {x: 272.53, y: 105.71767}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2121132094
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121132091}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 29
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 10
+    m_MaxSize: 47
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: NumDice
+--- !u!222 &2121132095
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2121132091}
+  m_CullTransparentMesh: 0
 --- !u!33 &2121840978
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -109276,6 +109514,7 @@ GameObject:
   - component: {fileID: 2337611622097280958}
   - component: {fileID: 2337611622097280959}
   - component: {fileID: 2337611622097280956}
+  - component: {fileID: 2337611622097280955}
   m_Layer: 5
   m_Name: UI
   m_TagString: Untagged
@@ -109283,6 +109522,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &2337611622097280955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2337611622097280954}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9474431a8d3ef64e8bd340d78aafa0b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  boolText: {fileID: 91654513}
+  numText: {fileID: 2121132094}
+  boolDice: {fileID: 2120933280}
+  numDice: {fileID: 1924329484}
 --- !u!114 &2337611622097280956
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -109323,6 +109578,8 @@ RectTransform:
   - {fileID: 2337611622740256184}
   - {fileID: 2337611621947127267}
   - {fileID: 2337611622014419648}
+  - {fileID: 91654511}
+  - {fileID: 2121132092}
   m_Father: {fileID: 2337611622590454502}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 53, z: 0}
@@ -109960,6 +110217,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 3851121466429384672, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: goalSpawner
@@ -109970,6 +110232,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 2091697458}
+    - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 3851121466429384673, guid: dd0b61ce8ad4d55469f0423e88aa3e2f,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -110114,6 +110381,11 @@ PrefabInstance:
       propertyPath: spawner
       value: 
       objectReference: {fileID: 245282752}
+    - target: {fileID: 306500564122121865, guid: 95a629a533f9c3640985b95b8d329cf2,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95a629a533f9c3640985b95b8d329cf2, type: 3}
 --- !u!1001 &5321314370893252173
@@ -110123,11 +110395,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1940841871}
     m_Modifications:
+    - target: {fileID: 1615634388, guid: 3f91e99611d9afc4899b0d3faed3c1be, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5321314372415809225, guid: 3f91e99611d9afc4899b0d3faed3c1be,
         type: 3}
       propertyPath: spawner
       value: 
       objectReference: {fileID: 1556676637}
+    - target: {fileID: 5321314372415809225, guid: 3f91e99611d9afc4899b0d3faed3c1be,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5321314372750109281, guid: 3f91e99611d9afc4899b0d3faed3c1be,
         type: 3}
       propertyPath: m_RootOrder
@@ -110268,6 +110549,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 5664134474777843048, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134474777843051, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: m_Name
@@ -110283,6 +110569,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 602321481}
+    - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5664134475142008899, guid: c5061b2acf0e7494eb737a293459db62,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -110389,6 +110680,11 @@ PrefabInstance:
       objectReference: {fileID: 1040552774}
     - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
         type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
+    - target: {fileID: 7232705085712336078, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
       propertyPath: opponentHitMask.m_Bits
       value: 1073741824
       objectReference: {fileID: 0}
@@ -110397,6 +110693,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 7232705085712336079, guid: a91cc454084c0274f861a1660e03fbee,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a91cc454084c0274f861a1660e03fbee, type: 3}
 --- !u!1 &7232705084787402346 stripped
@@ -110429,6 +110730,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 7817868860104026336, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: goalSpawner
@@ -110439,6 +110745,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 900802921}
+    - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 7817868860104026337, guid: f09c93e870bfb9c4fabca4385cbfce72,
         type: 3}
       propertyPath: opponentHitMask.m_Bits
@@ -110588,6 +110899,11 @@ PrefabInstance:
       propertyPath: m_InteractionManager
       value: 
       objectReference: {fileID: 876359698}
+    - target: {fileID: 8089614824722154706, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: m_InteractionLayerMask.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: goalSpawner
@@ -110598,6 +110914,11 @@ PrefabInstance:
       propertyPath: startSpawner
       value: 
       objectReference: {fileID: 611062591}
+    - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
+        type: 3}
+      propertyPath: interactableOn.m_Bits
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 8089614824722154707, guid: 503fbff2053e5ee40a4a259534d2e010,
         type: 3}
       propertyPath: opponentHitMask.m_Bits

@@ -193,8 +193,6 @@ public class PhaseManager : MonoBehaviour
         worldState = WorldState.playerTurn;
     }
 
-
-
     // Update is called once per frame
     void Update()
     {
@@ -230,8 +228,7 @@ public class PhaseManager : MonoBehaviour
             case PlayerState.DiceRoll:
                 if(numberDiceThrown && boolDiceThrown && totalDiceResult == 0)
                 {
-                    TotalDiceResultCheck();
-                    
+                    TotalDiceResultCheck();                    
                 }
                 if(totalDiceResult > 0)
                 {
@@ -252,7 +249,7 @@ public class PhaseManager : MonoBehaviour
                 //wait until AI/Other player finish their turn
 
 
-                if(worldState == WorldState.playerTurn)
+                if(worldState == WorldState.playerTurn) //Exiting PlayerState.Waiting
                 {
                     if(playerState != PlayerState.Delay)
                     {

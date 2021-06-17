@@ -11,6 +11,9 @@ public class DiceBehaviour : MonoBehaviour
     private Rigidbody rb;
     [SerializeField] private Transform spawner;
 
+    [SerializeField] private LayerMask interactableOn;
+    [SerializeField] private LayerMask interactableOff;
+
     private float diceFallTreshold = 0.5f;
     private float resultDelay = 1.2f;
     private int rollResult;
@@ -48,7 +51,8 @@ public class DiceBehaviour : MonoBehaviour
 
     #region ResultAnnouncerEvents
     public static event Action<int> OnDiceNumberResult;
-    public static event Action<int> OnDiceBoolResult;    
+    public static event Action<int> OnDiceBoolResult;
+    public static event Action<GameObject, string> OnDiceStateChange;
     #endregion
 
     private void Start()
@@ -56,6 +60,8 @@ public class DiceBehaviour : MonoBehaviour
         rb = GetComponent<Rigidbody>();        
         grabControl = GetComponent<XRGrabInteractable>();
         grabCollider = GetComponentInChildren<SphereCollider>();
+
+        Debug.Log(interactableOff + " " + interactableOn);
         //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete
         Debug.Log("Starting dice state = " + diceState);
   
@@ -80,10 +86,10 @@ public class DiceBehaviour : MonoBehaviour
     #region DiceInteractableSwitch
     private void ReadyingDice(PhaseManager phase)
     {
-        if (!grabCollider.enabled)
-            grabCollider.enabled = true;
         diceState = DiceState.Ready;
-          
+        
+        OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
+      
     }
     
     #endregion
@@ -92,7 +98,8 @@ public class DiceBehaviour : MonoBehaviour
     {
         if (diceState == DiceState.Ready)
         {
-            diceState = DiceState.Grabable;            
+            diceState = DiceState.Grabable;
+            OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             //Debug.Log(this.gameObject.name + " is GRABABLE");
         }
 
@@ -102,18 +109,21 @@ public class DiceBehaviour : MonoBehaviour
     {
         if (diceState == DiceState.Grabable)
         {
-            diceState = DiceState.Ready;            
+            diceState = DiceState.Ready;
+            OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             //Debug.Log(this.gameObject.name + " is NOT GRABABLE");
         }
 
     }
 
-
+    
     private void DiceGrab(HandPresence hand) //On dice grabbed
     {
         if(diceState == DiceState.Grabable) // && interactable)
         {
             diceState = DiceState.OnHand;
+
+            OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             Debug.Log(this.gameObject.name + " ON HAND");
         }        
     }
@@ -122,12 +132,14 @@ public class DiceBehaviour : MonoBehaviour
     {
         if(diceState == DiceState.OnHand)
         {
-            diceState = DiceState.Thrown;            
+            diceState = DiceState.Thrown;
+            OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             Debug.Log("Current dice state = " + diceState);
             //polishing checklist
             //add force to dice
         }
     }
+    
 
     private void DiceCheck() //Refactor this if needed
     {        
@@ -155,7 +167,7 @@ public class DiceBehaviour : MonoBehaviour
             }
 
             Debug.Log(this.gameObject.name + " is thrown");
-            grabCollider.enabled = false;
+            //grabCollider.enabled = false;
             //StartCoroutine(NumberResultDelay());
             OnDiceNumberResult?.Invoke(rollResult);
             transform.position = spawner.position;
@@ -178,7 +190,7 @@ public class DiceBehaviour : MonoBehaviour
             }
 
             Debug.Log(this.gameObject.name + " is thrown");
-            grabCollider.enabled = false;
+            
             //StartCoroutine(BoolResultDelay());
             OnDiceBoolResult?.Invoke(rollResult);
             transform.position = spawner.position;
@@ -218,11 +230,20 @@ public class DiceBehaviour : MonoBehaviour
         switch (diceState)
         {
             case DiceState.Waiting:
-                if (grabCollider.enabled)
-                    grabCollider.enabled = false;
+                //if (grabCollider.enabled)
+                //    grabCollider.enabled = false;
+                if (grabControl.interactionLayerMask != interactableOff)
+                {
+                    grabControl.interactionLayerMask = interactableOff;
+                }
                 break;
             case DiceState.Ready:
                 //Things to Update() during idle
+                if(grabControl.interactionLayerMask != interactableOn)
+                {
+                    grabControl.interactionLayerMask = interactableOn;
+                }
+                
                 break;
             case DiceState.Grabable:
                 //Things to Update() during grabable
@@ -235,16 +256,20 @@ public class DiceBehaviour : MonoBehaviour
             case DiceState.Thrown:
                 //bool CheckResult() until return true
                 //if return true, switch to DiceState.Idle
-                if(rb.velocity.magnitude <= 0.0001f)
+                if (grabControl.interactionLayerMask != interactableOff)
+                {
+                    grabControl.interactionLayerMask = interactableOff;
+                }
+
+                if (rb.velocity.magnitude <= 0.0001f)
                 {                    
                     Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
                     this.DiceCheck();
 
-                    this.grabCollider.enabled = false;
+                    //this.grabCollider.enabled = false;
                     this.diceState = DiceState.Waiting;
+                    OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
                 }
-                if (grabCollider.enabled)
-                    grabCollider.enabled = false;
                 break;
 
         }

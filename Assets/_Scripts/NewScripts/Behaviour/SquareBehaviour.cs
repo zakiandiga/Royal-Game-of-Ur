@@ -51,8 +51,7 @@ public class SquareBehaviour : MonoBehaviour
             {
                 Debug.Log(this.gameObject.name + " square occupied by a WHITE piece");
                 squareTenant = SquareTenant.White;
-            }
-                
+            }                
 
             if(hit.collider.gameObject.layer == 30) //30 = AI piece layer
             {

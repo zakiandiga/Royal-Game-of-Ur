@@ -23,6 +23,7 @@ public class DebugTextTemporary : MonoBehaviour
     private void OnDisable()
     {
         PieceBehaviour.OnDebugText -= UpdateText;
+        BoardManager.OnDebugText -= UpdateText;
     }
 
     // Update is called once per frame
