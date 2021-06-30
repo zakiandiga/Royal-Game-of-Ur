@@ -38,9 +38,17 @@
                     "interactions": ""
                 },
                 {
-                    "name": "DebugLog",
+                    "name": "DebugLogToggle",
                     "type": "Button",
                     "id": "47f92e52-9598-4270-bc2b-1a16177fae07",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "DebugLogScroll",
+                    "type": "Button",
+                    "id": "c38b255f-0363-4732-babd-71567a59b71e",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -160,13 +168,68 @@
                 {
                     "name": "",
                     "id": "3034905a-d83e-4778-a143-d3436144d9b9",
-                    "path": "<XRController>{RightHand}/secondaryButton",
+                    "path": "<XRController>{LeftHand}/secondaryButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "DebugLog",
+                    "action": "DebugLogToggle",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "44f30319-1c11-4e1d-81bc-bcb7fdc6dc6d",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogScroll",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "8f6b1200-63c4-48d5-b8fe-98f13e25d29a",
+                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "e22ea61d-7a6d-4b55-a0bc-06467ce438ee",
+                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "2ce2315d-99b8-454a-8608-29805234f2a1",
+                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "4b3f2dbe-e5f8-416f-86f8-d17e5bfe6ab3",
+                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "DebugLogScroll",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }
