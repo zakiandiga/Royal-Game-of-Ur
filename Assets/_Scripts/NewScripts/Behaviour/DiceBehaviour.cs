@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -45,13 +44,17 @@ public class DiceBehaviour : MonoBehaviour
         Grabable,
         OnHand,
         Thrown,
-        Waiting
+        Waiting,
+        AI_Throw
     }
     #endregion
 
+    [SerializeField] private bool aIDice;
+    private bool checkingAIDiceResult;
+
     #region ResultAnnouncerEvents
-    public static event Action<int> OnDiceNumberResult;
-    public static event Action<int> OnDiceBoolResult;
+    public static event Action<int, bool> OnDiceNumberResult;
+    public static event Action<int, bool> OnDiceBoolResult;
     public static event Action<GameObject, string> OnDiceStateChange;
     #endregion
 
@@ -61,7 +64,6 @@ public class DiceBehaviour : MonoBehaviour
         grabControl = GetComponent<XRGrabInteractable>();
         grabCollider = GetComponentInChildren<SphereCollider>();
 
-        Debug.Log(interactableOff + " " + interactableOn);
         //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete
         Debug.Log("Starting dice state = " + diceState);
   
@@ -69,21 +71,34 @@ public class DiceBehaviour : MonoBehaviour
 
     private void OnEnable()
     {
-        HandPresence.OnEnterGrip += DiceGrab;
-        HandPresence.OnExitGrab += DiceThrow;
-        PhaseManager.OnEnterDiceRoll += ReadyingDice;
-        //PhaseManager.OnExitDiceRoll += InteractableOff;
+        if(!aIDice)
+        {
+            HandPresence.OnEnterGrip += DiceGrab;
+            HandPresence.OnExitGrab += DiceThrow;
+            PhaseManager.OnEnterDiceRoll += ReadyingDice;
+        }
+
+        if(aIDice)
+        {
+            AIAnimationStateMachine.OnDiceThrownAI += DiceThrowAI;
+        }
     }
 
     private void OnDisable()
     {
-        HandPresence.OnExitGrab -= DiceThrow;
-        HandPresence.OnEnterGrip -= DiceGrab;
-        PhaseManager.OnEnterDiceRoll -= ReadyingDice;
-        //PhaseManager.OnExitDiceRoll -= InteractableOff;
+        if(!aIDice)
+        {
+            HandPresence.OnExitGrab -= DiceThrow;
+            HandPresence.OnEnterGrip -= DiceGrab;
+            PhaseManager.OnEnterDiceRoll -= ReadyingDice;
+        }
+        if(aIDice)
+        {
+            AIAnimationStateMachine.OnDiceThrownAI -= DiceThrowAI;
+        }
     }
 
-    #region DiceInteractableSwitch
+#region PlayerDiceInteractableSwitch
     private void ReadyingDice(PhaseManager phase)
     {
         diceState = DiceState.Ready;
@@ -91,9 +106,9 @@ public class DiceBehaviour : MonoBehaviour
         OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
       
     }
-    
-    #endregion
+#endregion
 
+#region PlayerDiceInteractor
     public void GrabColliderEnter()
     {
         if (diceState == DiceState.Ready)
@@ -139,7 +154,15 @@ public class DiceBehaviour : MonoBehaviour
             //add force to dice
         }
     }
-    
+#endregion
+
+    public void DiceThrowAI(string ai)
+    {
+        if(diceState != DiceState.AI_Throw)
+        {
+            diceState = DiceState.AI_Throw;
+        }
+    }
 
     private void DiceCheck() //Refactor this if needed
     {        
@@ -163,15 +186,14 @@ public class DiceBehaviour : MonoBehaviour
             else
             {
                 rollResult = -1;
-                Debug.Log("Dice result error");
+                Debug.Log(this.gameObject.name + " DiceCheck error");
             }
 
             Debug.Log(this.gameObject.name + " is thrown");
             //grabCollider.enabled = false;
             //StartCoroutine(NumberResultDelay());
-            OnDiceNumberResult?.Invoke(rollResult);
+            OnDiceNumberResult?.Invoke(rollResult, aIDice);
             transform.position = spawner.position;
-
         }
         else if (diceType == DiceType.Bool)
         {
@@ -186,15 +208,14 @@ public class DiceBehaviour : MonoBehaviour
             else
             {
                 rollResult = -1;
-                Debug.Log("Dice result error");
+                Debug.Log(this.gameObject.name + " DiceCheck error");
             }
 
             Debug.Log(this.gameObject.name + " is thrown");
             
             //StartCoroutine(BoolResultDelay());
-            OnDiceBoolResult?.Invoke(rollResult);
+            OnDiceBoolResult?.Invoke(rollResult, aIDice);
             transform.position = spawner.position;
-
         }
         else
         {
@@ -204,19 +225,14 @@ public class DiceBehaviour : MonoBehaviour
 
     private IEnumerator NumberResultDelay()
     {
-
         yield return new WaitForSeconds(resultDelay);
-        OnDiceNumberResult?.Invoke(rollResult);
+        OnDiceNumberResult?.Invoke(rollResult, aIDice);
         transform.position = spawner.position;
-
     }
 
     private IEnumerator BoolResultDelay()
     {
-
-        yield return new WaitForSeconds(resultDelay);
-
-        
+        yield return new WaitForSeconds(resultDelay);        
     }
 
     // Update is called once per frame
@@ -232,14 +248,14 @@ public class DiceBehaviour : MonoBehaviour
             case DiceState.Waiting:
                 //if (grabCollider.enabled)
                 //    grabCollider.enabled = false;
-                if (grabControl.interactionLayerMask != interactableOff)
+                if (grabControl.interactionLayerMask != interactableOff && !aIDice)
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
                 break;
             case DiceState.Ready:
                 //Things to Update() during idle
-                if(grabControl.interactionLayerMask != interactableOn)
+                if(grabControl.interactionLayerMask != interactableOn && !aIDice)
                 {
                     grabControl.interactionLayerMask = interactableOn;
                 }
@@ -256,7 +272,7 @@ public class DiceBehaviour : MonoBehaviour
             case DiceState.Thrown:
                 //bool CheckResult() until return true
                 //if return true, switch to DiceState.Idle
-                if (grabControl.interactionLayerMask != interactableOff)
+                if (grabControl.interactionLayerMask != interactableOff && !aIDice)
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
@@ -264,16 +280,25 @@ public class DiceBehaviour : MonoBehaviour
                 if (rb.velocity.magnitude <= 0.0001f)
                 {                    
                     Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
+
                     this.DiceCheck();
 
                     //this.grabCollider.enabled = false;
                     this.diceState = DiceState.Waiting;
+
                     OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
                 }
                 break;
-
-        }
-            
+            case DiceState.AI_Throw:
+                if (rb.velocity.magnitude <= 0.0001f)
+                {
+                    Debug.Log(this.gameObject.name + " stop falling, now DiceCheck()");
+                    this.DiceCheck();
+                    
+                    this.diceState = DiceState.Waiting;
+                }
+                break;
+        }            
     }
 
     private void OnDrawGizmosSelected()

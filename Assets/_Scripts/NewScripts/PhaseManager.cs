@@ -87,22 +87,27 @@ public class PhaseManager : MonoBehaviour
 
 
     #region DiceResultObserver
-    private void DiceNumberResultCheck(int numResult)
+    private void DiceNumberResultCheck(int numResult, bool aIDice)
     {
-        Debug.Log("Recieve dice number result from DiceBehaviour, value: " + numResult);
-        numberDiceResult = numResult;
-        //Display on the UI?
-        numberDiceThrown = true;
+        if(!aIDice)
+        {
+            Debug.Log("Recieve dice number result from DiceBehaviour, value: " + numResult);
+            numberDiceResult = numResult;
+            //Display on the UI?
+            numberDiceThrown = true;
+        }
 
     }
 
-    private void DiceBoolResultCheck(int boolResult)
+    private void DiceBoolResultCheck(int boolResult, bool aIDice)
     {
-        Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + boolResult);
-        boolDiceResult = boolResult;
-        //Display on the UI?
-        boolDiceThrown = true;
-
+        if(!aIDice)
+        {
+            Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + boolResult);
+            boolDiceResult = boolResult;
+            //Display on the UI?
+            boolDiceThrown = true;
+        }
     }
 
     private void TotalDiceResultCheck()

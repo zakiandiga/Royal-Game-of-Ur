@@ -25,9 +25,7 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
-        legalMove = diceResult + currentSquareNumber; //test
-
-        
+        legalMove = diceResult + currentSquareNumber; //test      
 
     }
 
@@ -75,7 +73,7 @@ public class BoardManager : MonoBehaviour
 
             int currentSquare = whitePieces[i].currentSquare;
 
-            Debug.Log("currentSquare = " + currentSquare);
+            //Debug.Log("currentSquare = " + currentSquare);
 
             int targetSquareIndex = currentSquare + diceResult;           
 

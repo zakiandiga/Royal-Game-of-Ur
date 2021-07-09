@@ -47,9 +47,9 @@
                 },
                 {
                     "name": "DebugLogScroll",
-                    "type": "Button",
+                    "type": "PassThrough",
                     "id": "c38b255f-0363-4732-babd-71567a59b71e",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Analog",
                     "processors": "",
                     "interactions": ""
                 }
@@ -190,7 +190,7 @@
                 {
                     "name": "up",
                     "id": "8f6b1200-63c4-48d5-b8fe-98f13e25d29a",
-                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "path": "<XRController>{LeftHand}/joystick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -201,7 +201,7 @@
                 {
                     "name": "down",
                     "id": "e22ea61d-7a6d-4b55-a0bc-06467ce438ee",
-                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "path": "<XRController>{LeftHand}/joystick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -212,7 +212,7 @@
                 {
                     "name": "left",
                     "id": "2ce2315d-99b8-454a-8608-29805234f2a1",
-                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "path": "<XRController>{LeftHand}/joystick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -223,7 +223,7 @@
                 {
                     "name": "right",
                     "id": "4b3f2dbe-e5f8-416f-86f8-d17e5bfe6ab3",
-                    "path": "<XRController>{LeftHand}/primary2DAxis",
+                    "path": "<XRController>{LeftHand}/joystick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

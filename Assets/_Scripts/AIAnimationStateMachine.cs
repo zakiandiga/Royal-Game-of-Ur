@@ -6,11 +6,13 @@ using UnityEngine;
 public class AIAnimationStateMachine : MonoBehaviour {
 
     public static event Action<string> AI_TurnFinished;
+    public static event Action<string> OnDiceThrownAI;
+
     public AI_STATES state;
     public Animator anim;
 
     public GameObject opponent;
-	public GameObject gameboardlabels;
+    public GameObject gameboardlabels;
     private AIScript.AI ai;
     [Tooltip("Difficulty: Easiest (1) -> Hardest (inf)")]
     public int depth = 1;
@@ -21,7 +23,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     public int[] board; //int representation of boardpieces[] for AI script
     public GameObject[] boardpieces; //GameObject represenation of board[]
-	public Transform[] boardspots; //positions of board spots
+    public Transform[] boardspots; //positions of board spots
     public Transform[] dropspots;
     public GameObject[] blackdice; //AI dice GameObjects
     public GameObject[] piecerespawn;
@@ -35,8 +37,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
     private bool white; //is AI the white or black pieces?
 
     private IKControl ik;
-	public GameObject ltarget;
-	public GameObject rtarget;
+    public GameObject ltarget;
+    public GameObject rtarget;
     public Vector3 destination;
     public Vector3 restingdestination;
     public GameObject looktarget;
@@ -45,8 +47,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
     public bool lefthand; //false=right hand
     public GameObject restingleft;
     public GameObject restingright;
-	private float lerpoffset;
-    
+    private float lerpoffset;
+
     //wrist offset
     public GameObject RightWrist;
     public GameObject LeftWrist;
@@ -75,41 +77,52 @@ public class AIAnimationStateMachine : MonoBehaviour {
         S_IKtoDICETHROW1,
         S_IKtoDICETHROW2,
         S_IKtoDICETHROW3,
-        S_IKtoDICETHROW4, 
+        S_IKtoDICETHROW4,
+        S_DiceFallWaiting,
+        S_DiceResultChecking, //Added this state for new dice roll system
         S_CALCULATETURN,
         S_IKtoPIECEGRAB, //Renamed from grab to piecegrab
         S_PIECEGRABBING, //Renamed to PIECEGRABBING
         S_IKtoDROP,
         S_PIECEDROPPING, //Renamed to PIECEDROPPING
-        S_IKtoWAIT
+        S_IKtoWAIT,
+        S_AI_Error //Debug
     };
 
-	void Start () {
+    #region PlayingProperties
+    private int numberDiceResult, boolDiceResult, totalDiceResult;
+    private bool isCheckingDiceResult = false;
+    private bool numDiceRolled = false;
+    private bool boolDiceRolled = false;
+
+    #endregion
+
+    void Start() {
         //initialization of game
         anim.SetBool("LeftGrab", false);
         anim.SetBool("RightGrab", false);
 
         ai = new AIScript.AI();
-		turn = new AIScript.AI.Move(0,0);
+        turn = new AIScript.AI.Move(0, 0);
         aiturn = false;
 
-		board = new int[10];
+        board = new int[10];
         // 0-4:White & 5-9:Black 
         for (int i = 0; i < 10; i++)
         {
             board[i] = 0;
         }
 
-		int count = 0;
-		boardspots = new Transform[16];
-		for (int i = 0; i < gameboardlabels.transform.childCount; i++)
-		{
-			if (gameboardlabels.transform.GetChild(i).tag == "warspot" || gameboardlabels.transform.GetChild(i).tag == "opponentspot")
-			{
-				boardspots[count] = gameboardlabels.transform.GetChild(i);
-				count++;
-			}
-		}
+        int count = 0;
+        boardspots = new Transform[16];
+        for (int i = 0; i < gameboardlabels.transform.childCount; i++)
+        {
+            if (gameboardlabels.transform.GetChild(i).tag == "warspot" || gameboardlabels.transform.GetChild(i).tag == "opponentspot")
+            {
+                boardspots[count] = gameboardlabels.transform.GetChild(i);
+                count++;
+            }
+        }
 
         aiquadLight.SetActive(false);
         aiboolLight.SetActive(false);
@@ -120,7 +133,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
         ik = opponent.GetComponent<IKControl>();
         white = false;
 
-		ltarget.transform.position = restingleft.transform.position;
+        ltarget.transform.position = restingleft.transform.position;
         rtarget.transform.position = restingright.transform.position;
         looktarget.transform.position = playercam.transform.position;
         //wristoffset = new Vector3(-0.05f,0.1f,-0.05f);
@@ -131,16 +144,16 @@ public class AIAnimationStateMachine : MonoBehaviour {
         //A-wrist, B-palm
 
         if (lefthand)
-		{
+        {
             destination = restingleft.transform.position + LeftIKOffset;
             restingdestination = restingright.transform.position + RightIKOffset;
         }
-		else
-		{
+        else
+        {
             destination = restingright.transform.position + RightIKOffset;
             restingdestination = restingleft.transform.position + LeftIKOffset;
         }
-		lerpoffset = 0.01f;
+        lerpoffset = 0.01f;
 
         state = AI_STATES.S_WAITING;
         rollingdie = false;
@@ -167,19 +180,100 @@ public class AIAnimationStateMachine : MonoBehaviour {
     private void OnEnable()
     {
         PhaseManager.OnPhaseChange += CheckTurn;
+        DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
+        DiceBehaviour.OnDiceNumberResult += DiceNumberResultCheck;
     }
 
     private void OnDisable()
     {
         PhaseManager.OnPhaseChange -= CheckTurn;
+        DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
+        DiceBehaviour.OnDiceNumberResult -= DiceNumberResultCheck;
     }
 
     private void CheckTurn(string playerPhase)
     {
-        if(playerPhase == "Waiting" && !aiturn)
+        if (playerPhase == "Waiting" && !aiturn)
         {
             aiturn = true;
         }
+    }
+
+    #region DiceResultChecks
+    private void DiceBoolResultCheck(int boolResult, bool aIDice)
+    {
+        if (aIDice && !boolDiceRolled)
+        {
+            boolDiceResult = boolResult;
+            StartCoroutine(BoolDiceRollDelay());
+        }
+    }
+
+    private IEnumerator BoolDiceRollDelay()
+    {
+        Debug.Log("AI: BoolDiceRollDelay() STARTED");
+        float resultDelay = 1.2f;
+
+        yield return new WaitForSeconds(resultDelay);
+        boolDiceRolled = true;
+    }
+
+    private void DiceNumberResultCheck(int numResult, bool aIDice)
+    {
+        if(aIDice && !numDiceRolled)
+        {
+            numberDiceResult = numResult;
+            StartCoroutine(NumDiceRollDelay());
+        }        
+    }
+
+    private IEnumerator NumDiceRollDelay()
+    {
+        float resultDelay = 1.2f;
+
+        yield return new WaitForSeconds(resultDelay);
+        numDiceRolled = true;
+    }
+
+    private IEnumerator DiceThrowDelay()
+    {
+        float delay = 1.3f;
+        yield return new WaitForSeconds(delay);
+
+        OnDiceThrownAI?.Invoke("AI dice thrown");
+        isCheckingDiceResult = false;
+        state = AI_STATES.S_DiceResultChecking;
+
+    }
+
+    private int TotalDiceResultCheck()
+    {
+        if (boolDiceResult == 0)
+        {
+            return numberDiceResult;
+        }
+        else if (boolDiceResult == 1)
+        {
+            if (numberDiceResult >= 1 && numberDiceResult <= 3)
+                return numberDiceResult + 4;
+            else if (numberDiceResult == 4)
+                return 10;
+        }
+
+        Debug.Log("AI: Total dice result ERROR");
+        return -2;
+        //Debug.Log("Total AI Dice result = " + totalDiceResult);
+    }
+    #endregion
+
+    private void ResetDiceResult()
+    {
+        totalDiceResult = 0;
+        boolDiceResult = 0;
+        numberDiceResult = 0;
+
+        numDiceRolled = false;
+        boolDiceRolled = false;
     }
 
     void Update () {
@@ -227,6 +321,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
         switch (state)
         {
+            #region stateWaiting
             case AI_STATES.S_WAITING: // Player's Turn
                 lookdestination = playercam.transform.position;
                 look_lerpspeed = 5f;
@@ -244,13 +339,12 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 if (aiturn)
                 {
-                    Debug.Log("AI Turn Start!");
+                    Debug.Log("AI: AI Turn Start!");
                     state = AI_STATES.S_IKtoDICEGRAB;
                 }
                 break;
-
-
-            case AI_STATES.S_IKtoDICEGRAB:
+            #endregion
+            case AI_STATES.S_IKtoDICEGRAB: //AI dice rolling animation 1
                 rollingdie = true;
                 look_lerpspeed = 1f;
                 lookdestination = playercam.transform.position;
@@ -263,7 +357,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 break;
 
-            case AI_STATES.S_IKtoDICETHROW1:
+            case AI_STATES.S_IKtoDICETHROW1: //AI dice rolling animation 2
                 lookdestination = playercam.transform.position;
                 destination = dietarget1.transform.position + RightIKOffset;
                 foreach (GameObject blackdie in blackdice)
@@ -279,7 +373,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 break;
 
-            case AI_STATES.S_IKtoDICETHROW2:
+            case AI_STATES.S_IKtoDICETHROW2: //AI dice rolling animation 3
                 lookdestination = playercam.transform.position;
                 destination = dietarget2.transform.position + RightIKOffset;
                 foreach (GameObject blackdie in blackdice)
@@ -293,7 +387,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 break;
 
-            case AI_STATES.S_IKtoDICETHROW3:
+            case AI_STATES.S_IKtoDICETHROW3: //AI dice rolling animation 4
                 lookdestination = playercam.transform.position;
                 destination = dietarget1.transform.position + RightIKOffset;
                 foreach (GameObject blackdie in blackdice)
@@ -307,7 +401,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 break;
 
-            case AI_STATES.S_IKtoDICETHROW4:
+            case AI_STATES.S_IKtoDICETHROW4: //AI dice rolling animation 5
                 lookdestination = playercam.transform.position;
                 destination = dietarget3.transform.position + RightIKOffset;
 
@@ -315,29 +409,83 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 {
                     foreach (GameObject blackdie in blackdice)
                     {
-                        blackdie.GetComponent<Rigidbody>().isKinematic = false;
+                        float torqueX = UnityEngine.Random.Range(50, 80);
+                        float torqueY = UnityEngine.Random.Range(50, 80);
+                        float torqueZ = UnityEngine.Random.Range(50, 80);
+                        Rigidbody rb = blackdie.GetComponent<Rigidbody>();
+                        //DiceBehaviour db = blackdie.GetComponent<DiceBehaviour>();
+                        rb.isKinematic = false;                        
+                        rb.AddForce(new Vector3 (0,1,0), ForceMode.Impulse); //make a variable for the direction
+                        rb.AddTorque(new Vector3 (torqueX, torqueY, torqueZ), ForceMode.Force);
+                        //db.DiceThrowAI();
                     }
-                    state = AI_STATES.S_CALCULATETURN;
+  
+                    if(state != AI_STATES.S_DiceFallWaiting)
+                        state = AI_STATES.S_DiceFallWaiting;
+                    
                 }
                 else
                 {
                     foreach (GameObject blackdie in blackdice)
                     {
-                        blackdie.transform.position = RightHand.transform.position;
+                        blackdie.transform.position = RightHand.transform.position;                        
                     }
                 }
                 break;
 
+            case AI_STATES.S_DiceFallWaiting:
+                if(!isCheckingDiceResult)
+                {
+                    isCheckingDiceResult = true;
+                    StartCoroutine(DiceThrowDelay());
+                    Debug.Log("AI: Execute DiceThrowDelay()");                    
+                }
+                break;
+
+            case AI_STATES.S_DiceResultChecking:                                
+                if (boolDiceRolled && numDiceRolled)
+                {
+                    totalDiceResult = TotalDiceResultCheck();
+                    if(totalDiceResult < 0)
+                    {
+                        Debug.Log("AI: Error dice result, AI cannot proceed");
+                        state = AI_STATES.S_AI_Error;
+                    }
+
+                    if(totalDiceResult > 0)
+                    {
+                        Debug.Log("AI: Dice Result CHECKED, Result = " + totalDiceResult);
+                        state = AI_STATES.S_CALCULATETURN;
+                    }
+                                    
+                }
+                break;
+            case AI_STATES.S_AI_Error:
+                break;
+
+            #region stateCalculateTurn
             case AI_STATES.S_CALCULATETURN:
+                Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
+
                 rollingdie = false;
 
-                turn = ai.NextMove(board, rollDie(), depth);
-                if (turn.destination == 0)
+                //turn = ai.NextMove(board, rollDie(), depth);
+                turn = ai.NextMove(board, totalDiceResult, depth); //changed to the new dice roll system
+
+                if (turn.destination == 0) //No available move for AI
                 {
                     aiturn = false;
                     Debug.Log("AI Lost Turn");
                     destination = restingright.transform.position + RightIKOffset;
+
+
                     state = AI_STATES.S_WAITING;
+                    aiturn = false;
+                    lefthand = false;
+
+                    ResetDiceResult();
+
+                    AI_TurnFinished?.Invoke("Move Unavailable"); //Notify PhaseManager to switch to player turn
                     break;
                 }
                 aiboolLight.SetActive(true);
@@ -525,7 +673,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 lookdestination = destination;
                 state = AI_STATES.S_IKtoPIECEGRAB;
                 break;
+            #endregion
 
+            #region statePieceMoving
             case AI_STATES.S_IKtoPIECEGRAB:
 				if (lefthand)
 				{
@@ -617,11 +767,12 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 }
                 lerplighton = false;
                 lerplightoff = true;
-                state = AI_STATES.S_IKtoWAIT;
-
-                
+                state = AI_STATES.S_IKtoWAIT;                
                 break;
 
+            #endregion
+
+            #region stateWait
             case AI_STATES.S_IKtoWAIT:
 				if (lefthand)
 				{
@@ -631,17 +782,24 @@ public class AIAnimationStateMachine : MonoBehaviour {
                         if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14)
                         {
                             //AI reroll
-                            state = AI_STATES.S_WAITING;
                             aiturn = true;
-                            lefthand = false;                            
+                            lefthand = false;
+
+                            ResetDiceResult();
+
+                            state = AI_STATES.S_WAITING;                          
                         }
                         else
                         {
-                            state = AI_STATES.S_WAITING;
                             aiturn = false;
                             lefthand = false;
+
+                            //Reset AI dice results to 0 after finish a turn
+                            ResetDiceResult();
+
+                            state = AI_STATES.S_WAITING;
+
                             AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
-                            
                         }
                     }
 				}
@@ -652,21 +810,31 @@ public class AIAnimationStateMachine : MonoBehaviour {
                         if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14)
                         {
                             //AI reroll
-                            state = AI_STATES.S_WAITING;
                             aiturn = true;
                             lefthand = false;
+
+                            ResetDiceResult();
+
+                            state = AI_STATES.S_WAITING;
+
                         }
                         else
                         {
-                            state = AI_STATES.S_WAITING;
                             aiturn = false;
                             lefthand = false;
+
+                            //Reset AI dice results to 0 after finish a turn
+                            ResetDiceResult();
+
+                            state = AI_STATES.S_WAITING;
+
                             AI_TurnFinished?.Invoke("PieceDropped"); //Notify PhaseManager to switch to player turn
 
                         }
                     }
 				}
                 break;
+                #endregion
         }
 
         //DEBUG
