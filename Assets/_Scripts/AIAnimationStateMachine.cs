@@ -7,21 +7,22 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     public static event Action<string> AI_TurnFinished;
     public static event Action<string> OnDiceThrownAI;
-
+    public static event Action<string> OnPieceDropAI;
+ 
     public AI_STATES state;
     public Animator anim;
 
     public GameObject opponent;
     public GameObject gameboardlabels;
     private AIScript.AI ai;
+    AIScript.AI.Move turn;
     [Tooltip("Difficulty: Easiest (1) -> Hardest (inf)")]
     public int depth = 1;
-    AIScript.AI.Move turn;
-    int aipiece;
+    int currentTargetPiece;  //Zak: change the name from aipiece;
 
     public GameObject playercam;
 
-    public int[] board; //int representation of boardpieces[] for AI script
+    public int[] pieces; //int representation of boardpieces[] for AI script. Zak: change var name from board to pieces
     public GameObject[] boardpieces; //GameObject represenation of board[]
     public Transform[] boardspots; //positions of board spots
     public Transform[] dropspots;
@@ -33,9 +34,10 @@ public class AIAnimationStateMachine : MonoBehaviour {
     public Texture num0, num1, num2, num3, num4;
     public bool lerplighton, lerplightoff;
 
-    public bool aiturn;
-    private bool white; //is AI the white or black pieces?
+    public bool aiturn; //assigned on Start()
+    private bool white; //assigned on Start()
 
+    #region IKProperty
     private IKControl ik;
     public GameObject ltarget;
     public GameObject rtarget;
@@ -69,6 +71,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
     public GameObject restoffset;
     public GameObject dest;
     public GameObject rest;
+    #endregion
 
     // implementing states as enumeration
     public enum AI_STATES {
@@ -90,11 +93,16 @@ public class AIAnimationStateMachine : MonoBehaviour {
     };
 
     #region PlayingProperties
+    //Dice
     private int numberDiceResult, boolDiceResult, totalDiceResult;
     private bool isCheckingDiceResult = false;
     private bool numDiceRolled = false;
     private bool boolDiceRolled = false;
 
+    //Piece
+    private GameObject currentTargetPieceGameObject;
+    private PieceBehaviour currentPieceBehaviour; //Added this to adjust with new PieceBehaviour system
+    private Rigidbody currentRigidBody; //use this instead of using for loop
     #endregion
 
     void Start() {
@@ -106,13 +114,14 @@ public class AIAnimationStateMachine : MonoBehaviour {
         turn = new AIScript.AI.Move(0, 0);
         aiturn = false;
 
-        board = new int[10];
+        pieces = new int[10];
         // 0-4:White & 5-9:Black 
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 10; i++) //All pieces start from 0 (starting/pieces' Spawn point)
         {
-            board[i] = 0;
+            pieces[i] = 0;
         }
 
+        /* assigned on the inspector
         int count = 0;
         boardspots = new Transform[16];
         for (int i = 0; i < gameboardlabels.transform.childCount; i++)
@@ -123,6 +132,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 count++;
             }
         }
+        */
 
         aiquadLight.SetActive(false);
         aiboolLight.SetActive(false);
@@ -131,7 +141,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
         lerplighton = lerplightoff = false;
 
         ik = opponent.GetComponent<IKControl>();
-        white = false;
+        white = false; //AI set to black piece
 
         ltarget.transform.position = restingleft.transform.position;
         rtarget.transform.position = restingright.transform.position;
@@ -182,6 +192,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
         PhaseManager.OnPhaseChange += CheckTurn;
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
         DiceBehaviour.OnDiceNumberResult += DiceNumberResultCheck;
+        PieceBehaviour.OnPieceBackToStart += KickedPiecesPositionUpdate;
     }
 
     private void OnDisable()
@@ -189,6 +200,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
         PhaseManager.OnPhaseChange -= CheckTurn;
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
         DiceBehaviour.OnDiceNumberResult -= DiceNumberResultCheck;
+        PieceBehaviour.OnPieceBackToStart -= KickedPiecesPositionUpdate;
     }
 
     private void CheckTurn(string playerPhase)
@@ -264,9 +276,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
         return -2;
         //Debug.Log("Total AI Dice result = " + totalDiceResult);
     }
-    #endregion
 
-    private void ResetDiceResult()
+    private void ResetDiceResult() //Called after AI finish its turn
     {
         totalDiceResult = 0;
         boolDiceResult = 0;
@@ -275,6 +286,33 @@ public class AIAnimationStateMachine : MonoBehaviour {
         numDiceRolled = false;
         boolDiceRolled = false;
     }
+    #endregion
+    #region PiecePositionChecks
+    private void PiecesLocationUpdate()
+    {
+        Debug.Log("PIECE LOCATION UPDATE");
+        for (int i = 0; i<boardpieces.Length; i++)
+        {
+            pieces[i] = boardpieces[i].gameObject.GetComponent<PieceBehaviour>().currentSquare;
+            Debug.Log(i + " is at " + pieces[i]);
+        }
+    }
+
+    private void KickedPiecesPositionUpdate(GameObject kickedPiece)
+    {
+        for (int i = 0; i < boardpieces.Length; i++) //loop through all the pieces
+        {
+            if (boardpieces[i].gameObject == kickedPiece) //if it's the same one with the kickedPiece
+            {
+                pieces[i] = 0; //reset its int representation to the starting position
+                Debug.Log("AI: RESET POSITION OF KICKED" + kickedPiece + " (piece number " + i +") to its starting position");
+
+            }
+        }
+    }
+
+    #endregion
+
 
     void Update () {
         RightIKOffset = RightWrist.transform.position - RightHand.transform.position; //RightHand.transform.localPosition / 10;// RightWrist.transform.TransformPoint(RightHand.transform.localPosition) / 10;
@@ -323,6 +361,15 @@ public class AIAnimationStateMachine : MonoBehaviour {
         {
             #region stateWaiting
             case AI_STATES.S_WAITING: // Player's Turn
+                if(currentPieceBehaviour != null)
+                {
+                    currentPieceBehaviour = null;
+                }
+                if(currentRigidBody != null)
+                {
+                    currentRigidBody = null;
+                }
+
                 lookdestination = playercam.transform.position;
                 look_lerpspeed = 5f;
                 aiboolLight.SetActive(false);
@@ -340,10 +387,12 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 if (aiturn)
                 {
                     Debug.Log("AI: AI Turn Start!");
+                    PiecesLocationUpdate();
                     state = AI_STATES.S_IKtoDICEGRAB;
                 }
                 break;
             #endregion
+            #region stateDiceThrow
             case AI_STATES.S_IKtoDICEGRAB: //AI dice rolling animation 1
                 rollingdie = true;
                 look_lerpspeed = 1f;
@@ -437,47 +486,42 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 if(!isCheckingDiceResult)
                 {
                     isCheckingDiceResult = true;
-                    StartCoroutine(DiceThrowDelay());
-                    Debug.Log("AI: Execute DiceThrowDelay()");                    
+                    StartCoroutine(DiceThrowDelay());                   
                 }
                 break;
 
-            case AI_STATES.S_DiceResultChecking:                                
+            case AI_STATES.S_DiceResultChecking:
                 if (boolDiceRolled && numDiceRolled)
                 {
                     totalDiceResult = TotalDiceResultCheck();
-                    if(totalDiceResult < 0)
+                    if (totalDiceResult < 0)
                     {
                         Debug.Log("AI: Error dice result, AI cannot proceed");
-                        state = AI_STATES.S_AI_Error;
+
                     }
 
-                    if(totalDiceResult > 0)
+                    if (totalDiceResult > 0)
                     {
                         Debug.Log("AI: Dice Result CHECKED, Result = " + totalDiceResult);
                         state = AI_STATES.S_CALCULATETURN;
                     }
-                                    
                 }
                 break;
-            case AI_STATES.S_AI_Error:
-                break;
+            #endregion
 
             #region stateCalculateTurn
             case AI_STATES.S_CALCULATETURN:
                 Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
-
                 rollingdie = false;
 
                 //turn = ai.NextMove(board, rollDie(), depth);
-                turn = ai.NextMove(board, totalDiceResult, depth); //changed to the new dice roll system
+                turn = ai.NextMove(pieces, totalDiceResult, depth); //changed to the new dice roll system
 
                 if (turn.destination == 0) //No available move for AI
                 {
                     aiturn = false;
                     Debug.Log("AI Lost Turn");
                     destination = restingright.transform.position + RightIKOffset;
-
 
                     state = AI_STATES.S_WAITING;
                     aiturn = false;
@@ -493,29 +537,37 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 lerplighton = true;
                 lerplightoff = false;
 
-                aipiece = turn.piece;
-                if (!white)
-                {
-                    aipiece += 4;
-                }
-                if (aipiece >= 10)
-                {
-                    Debug.Log("ERROR: PIECE INDEX IS 10");
-                }
+                int tempTargetPiece = turn.piece;
 
+                /* assign a rb variable instead and
+                 * change the rigidbody isKinematic during AI_STATES.S_IKtoDROP
                 foreach (GameObject p in boardpieces)
                 {
                     p.GetComponent<Rigidbody>().isKinematic = true;
                 }
+                */
+
                 
-                //piece 1
-                if (aipiece == 5)
+                if (!white) //Hack from existing system
                 {
-                    if (board[aipiece] == 0) // starting point off board
+                    tempTargetPiece += 4;
+                    currentTargetPiece = tempTargetPiece;
+                }
+
+                if (currentTargetPiece >= 10)
+                {
+                    Debug.Log("ERROR: PIECE INDEX IS 10");
+                }
+
+                #region AI Hand position Adjustment
+                //piece 1
+                if (currentTargetPiece == 5)
+                {
+                    if (pieces[currentTargetPiece] == 0) // starting point off board
                     {
                         lefthand = true;
                     }
-                    else if (board[aipiece] >= 1 && board[aipiece] <= 8)
+                    else if (pieces[currentTargetPiece] >= 1 && pieces[currentTargetPiece] <= 8)
                     {
                         if (turn.destination >= 10)
                         {
@@ -532,13 +584,13 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     }
                 }
                 //piece 2
-                else if (aipiece == 6)
+                else if (currentTargetPiece == 6)
                 {
-                    if (board[aipiece] == 0) // starting point off board
+                    if (pieces[currentTargetPiece] == 0) // starting point off board
                     {
                         lefthand = true;
                     }
-                    else if (board[aipiece] >= 1 && board[aipiece] <= 8)
+                    else if (pieces[currentTargetPiece] >= 1 && pieces[currentTargetPiece] <= 8)
                     {
                         if (turn.destination >= 10)
                         {
@@ -555,9 +607,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     }
                 }
                 //piece 3
-                else if (aipiece == 7)
+                else if (currentTargetPiece == 7)
                 {
-                    if (board[aipiece] == 0) // starting point off board
+                    if (pieces[currentTargetPiece] == 0) // starting point off board
                     {
                         if (turn.destination > 8)
                         {
@@ -568,7 +620,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                             lefthand = true;
                         }
                     }
-                    else if (board[aipiece] >= 1 && board[aipiece] <= 8)
+                    else if (pieces[currentTargetPiece] >= 1 && pieces[currentTargetPiece] <= 8)
                     {
                         if (turn.destination >= 10)
                         {
@@ -585,9 +637,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     }
                 }
                 //piece 4
-                else if (aipiece == 8)
+                else if (currentTargetPiece == 8)
                 {
-                    if (board[aipiece] == 0) // starting point off board
+                    if (pieces[currentTargetPiece] == 0) // starting point off board
                     {
                         if (turn.destination >= 2 && turn.destination <= 7)
                         {
@@ -598,7 +650,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                             lefthand = false;
                         }
                     }
-                    else if (board[aipiece] >= 1 && board[aipiece] <= 8)
+                    else if (pieces[currentTargetPiece] >= 1 && pieces[currentTargetPiece] <= 8)
                     {
                         if (turn.destination >= 10)
                         {
@@ -615,9 +667,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     }
                 }
                 //piece 5
-                else if (aipiece == 9)
+                else if (currentTargetPiece == 9)
                 {
-                    if (board[aipiece] == 0) // starting point off board
+                    if (pieces[currentTargetPiece] == 0) // starting point off board
                     {
                         if (turn.destination >= 3 && turn.destination <= 6)
                         {
@@ -628,7 +680,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                             lefthand = false;
                         }
                     }
-                    else if (board[aipiece] >= 1 && board[aipiece] <= 8)
+                    else if (pieces[currentTargetPiece] >= 1 && pieces[currentTargetPiece] <= 8)
                     {
                         if (turn.destination >= 10)
                         {
@@ -644,17 +696,18 @@ public class AIAnimationStateMachine : MonoBehaviour {
                         lefthand = false;
                     }
                 }
-                
+
+                //converting the AI piece's int info to game object
                 //set ikTargetObj = piece pos
                 if (lefthand)
                 {
                     restingdestination = restingright.transform.position + RightIKOffset;// +wristoffset;
-                    destination = boardpieces[aipiece].transform.position + LeftIKOffset;
+                    destination = boardpieces[currentTargetPiece].transform.position + LeftIKOffset;
                 }
                 else
                 {
                     restingdestination = restingleft.transform.position + LeftIKOffset;
-                    destination = boardpieces[aipiece].transform.position + RightIKOffset;
+                    destination = boardpieces[currentTargetPiece].transform.position + RightIKOffset;
                 }
                 /*if (board[aipiece] >= 1 && board[aipiece] <= 8)
                 {
@@ -670,13 +723,28 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 {
                     Debug.Log("ERROR: IK Obj Invalid index");
                 }*/
+
+                #endregion
                 lookdestination = destination;
+
+                //Define the current turn's target piece GameObject based on the latest currentTargetPiece
+                currentTargetPieceGameObject = boardpieces[currentTargetPiece].gameObject;
+                currentPieceBehaviour = currentTargetPieceGameObject.GetComponent<PieceBehaviour>(); //and its PieceBehaviour component
+                currentRigidBody = currentTargetPieceGameObject.GetComponent<Rigidbody>(); //and its RigidBody  
+
+                Debug.Log("currentTargetPiece = " + currentTargetPiece);
+                Debug.Log("AI: Going to move " + boardpieces[currentTargetPiece].gameObject.name);
+                Debug.Log("AI PieceBehaviour: " + boardpieces[currentTargetPiece].gameObject.GetComponent<PieceBehaviour>().gameObject.name);
+                Debug.Log("AI currentPieceBehaviour " + currentPieceBehaviour.gameObject.name);
+                Debug.Log("AI: destination = " + turn.destination);
+                //currentRigidBody.isKinematic = true;
+                currentPieceBehaviour.AIMovePiece(turn.destination);
                 state = AI_STATES.S_IKtoPIECEGRAB;
                 break;
             #endregion
 
             #region statePieceMoving
-            case AI_STATES.S_IKtoPIECEGRAB:
+            case AI_STATES.S_IKtoPIECEGRAB: //Move AI hand to the target piece
 				if (lefthand)
 				{
 					if ((ltarget.transform.position - destination).magnitude < lerpoffset)
@@ -695,8 +763,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
 				}
 				break;
 
-            case AI_STATES.S_PIECEGRABBING:
-                board[aipiece] = turn.destination;
+            #region PieceGrabbing
+            case AI_STATES.S_PIECEGRABBING: //Set the target destination
+                pieces[currentTargetPiece] = turn.destination; //update current target piece 'position' to the turn.destination value
                 if (lefthand)
                 {
                     destination = dropspots[turn.destination].transform.position + LeftIKOffset;
@@ -706,50 +775,65 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     destination = dropspots[turn.destination].transform.position + RightIKOffset;
                 }
                 lookdestination = destination;
-                for (int i = 0; i < 5; i++)
+
+                #region OldVersionPieceKickHandling
+                //old system player piece kicking handling.
+                //The new system (Zak) handle kicking on PieceBehaviour.cs and pass the info to this.PiecePositionCheck()
+                /*
+                for (int i = 0; i < 5; i++) //for board 0-4 (player pieces)
                 {
-                    if (board[i] == turn.destination)
+                    if (pieces[i] == turn.destination) //if the player piece is on the AI destination, kick it
                     {
                         if (turn.destination > 4 && turn.destination < 13)
                         {
-                            board[i] = 0;
+                            pieces[i] = 0;
                             boardpieces[i].transform.position = piecerespawn[i].transform.position;
                             Debug.Log("Opponent knocks player: board[" + i + "] = 0");
                             break;
                         }
                     }
                 }
+                */
+                #endregion
+
                 state = AI_STATES.S_IKtoDROP;
                 break;
+            #endregion
 
-			case AI_STATES.S_IKtoDROP:
-				if (lefthand)
+            case AI_STATES.S_IKtoDROP: //Moving the piece to the target destination
+                //Debug.Log("AI: moving piece: " + currentPieceBehaviour.gameObject.name);
+                
+                if (lefthand)
 				{
-                    boardpieces[aipiece].transform.position = LeftHand.transform.position;
+                    boardpieces[currentTargetPiece].transform.position = LeftHand.transform.position;
                     if ((ltarget.transform.position - destination).magnitude < lerpoffset)
 					{
-                        boardpieces[aipiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - LeftIKOffset;
+                        boardpieces[currentTargetPiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - LeftIKOffset;
                         anim.SetBool("LeftGrab", false);
                         state = AI_STATES.S_PIECEDROPPING;
 					}
 				}
 				else
 				{
-					boardpieces[aipiece].transform.position = RightHand.transform.position;
+					boardpieces[currentTargetPiece].transform.position = RightHand.transform.position;
                     if ((rtarget.transform.position - destination).magnitude < lerpoffset)
                     {
-                        boardpieces[aipiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - RightIKOffset;
+                        boardpieces[currentTargetPiece].transform.position = dropspots[turn.destination].transform.position;//boardpieces[aipiece].transform.position = destination - RightIKOffset;
                         anim.SetBool("RightGrab", false);
                         state = AI_STATES.S_PIECEDROPPING;
 					}
 				}
 				break;
 
-            case AI_STATES.S_PIECEDROPPING:
+            case AI_STATES.S_PIECEDROPPING: //drop the piece and move the AI hand back to rest (default) position
+                //currentRigidBody.isKinematic = false;
+                currentPieceBehaviour.AIDropPiece();
+                /*
                 foreach (GameObject p in boardpieces)
                 {
                     p.GetComponent<Rigidbody>().isKinematic = false;
                 }
+                */
 				if (lefthand)
 				{
 					destination = restingleft.transform.position + LeftIKOffset;// + wristoffset
@@ -759,27 +843,30 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     destination = restingright.transform.position + RightIKOffset;
 				}
                 lookdestination = playercam.transform.position;
+
                 // if ai pieces are all in spot 15, player wins
-                if (board[5] == 15 && board[6] == 15 && board[7] == 15 && board[8] == 15 && board[9] == 15)
+                /* handled on PhaseManager
+                if (pieces[5] == 15 && pieces[6] == 15 && pieces[7] == 15 && pieces[8] == 15 && pieces[9] == 15)
                 {
                     Debug.Log("AI Wins");
                     Time.timeScale = 0;
                 }
+                */
                 lerplighton = false;
                 lerplightoff = true;
-                state = AI_STATES.S_IKtoWAIT;                
+                state = AI_STATES.S_IKtoWAIT;
                 break;
 
             #endregion
 
             #region stateWait
-            case AI_STATES.S_IKtoWAIT:
+            case AI_STATES.S_IKtoWAIT:   
 				if (lefthand)
 				{
+                    //should be similar to PieceManager.PieceDropCheck()
 					if ((ltarget.transform.position - destination).magnitude < lerpoffset)
-					{
-                        //AI drop on the rosette
-                        if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14)
+					{                        
+                        if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14) //if turn.destination is rosette
                         {
                             //AI reroll
                             aiturn = true;
@@ -807,7 +894,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 				{
 					if ((rtarget.transform.position - destination).magnitude < lerpoffset)
 					{
-                        if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14)
+                        if (turn.destination == 4 || turn.destination == 8 || turn.destination == 14) //if turn.destination is rosette
                         {
                             //AI reroll
                             aiturn = true;

@@ -9,7 +9,7 @@ public class BoardManager : MonoBehaviour
 
     public List<GameObject> playerSquare; //Square that response to player's interaction
     public List<GameObject> aISquare; //Square that response to AI's interaction
-    public List<PieceBehaviour> whitePieces;
+    public List<PieceBehaviour> playerPieces;
 
     [SerializeField] private int diceResult = 2;
     [SerializeField] private int currentSquareNumber = 0;
@@ -52,26 +52,26 @@ public class BoardManager : MonoBehaviour
     private void DiceRollObserver(int dice)
     {
         diceResult = dice;
-        CheckPieceLegalMove();
+        CheckPlayerPieceLegalMove();
     }
 
     public void RollDiceDebug()
     {
         diceResult = UnityEngine.Random.Range(1, 10);
         Debug.Log("Debug dice result = " + diceResult);
-        CheckPieceLegalMove();
+        CheckPlayerPieceLegalMove();
     }
 
-    private void CheckPieceLegalMove()
+    private void CheckPlayerPieceLegalMove()
     {
         Debug.Log("Checking pieces legal move");
 
         int legalMoveAmount = 0;
-        for (int i = 0; i < whitePieces.Count; ++i)
+        for (int i = 0; i < playerPieces.Count; ++i)
         {
             int finishSquareIndex = 15; //Temporary 'piece exit' handler
 
-            int currentSquare = whitePieces[i].currentSquare;
+            int currentSquare = playerPieces[i].currentSquare;
 
             //Debug.Log("currentSquare = " + currentSquare);
 
@@ -86,13 +86,13 @@ public class BoardManager : MonoBehaviour
             if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant != SquareBehaviour.SquareTenant.White)
             {
                 legalMoveAmount += 1;
-                whitePieces[i].targetSquare = targetSquareIndex;
-                whitePieces[i].hasValidMove = true;
+                playerPieces[i].playerTargetSquare = targetSquareIndex;
+                playerPieces[i].hasValidMove = true;
             }
 
             if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant == SquareBehaviour.SquareTenant.White)
             {
-                whitePieces[i].hasValidMove = false;
+                playerPieces[i].hasValidMove = false;
             }
 
         }
@@ -162,8 +162,21 @@ public class BoardManager : MonoBehaviour
         }
     }
 
+    private void PieceDropHandler(bool legalDrop, int targetSquare, bool isPlayerPiece)
+    {
+        if(isPlayerPiece)
+        {
+            PlayerPieceDrop(legalDrop, targetSquare);
+        }
+
+        else if(!isPlayerPiece)
+        {
+            AIPieceDrop(legalDrop, targetSquare);
+        }
+    }
+
     //turn the square highlight off after the piece is dropped
-    private void PieceDropHandler(bool legalDrop, int targetSquare) 
+    private void PlayerPieceDrop(bool legalDrop, int targetSquare) 
     {
         var squareTenant = playerSquare[targetSquare].GetComponent<SquareBehaviour>().squareTenant;
         bool isRosette = playerSquare[targetSquare].GetComponent<SquareBehaviour>().isRosette;
@@ -177,8 +190,7 @@ public class BoardManager : MonoBehaviour
                 isKicking = true;
                 OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
             }
-
-            if(squareTenant == SquareBehaviour.SquareTenant.Empty)
+            else if(squareTenant == SquareBehaviour.SquareTenant.Empty)
             {
                 //drop casually
                 isKicking = false;
@@ -193,6 +205,35 @@ public class BoardManager : MonoBehaviour
             {
                 highlight.enabled = false;
             }
+        }
+    }
+
+    private void AIPieceDrop(bool legalDrop, int targetSquare)
+    {
+        //AI drop doesn't need to consider legalDrop value because it is always true at this point
+        var squareTenant = aISquare[targetSquare].GetComponent<SquareBehaviour>().squareTenant;
+        bool isRosette = aISquare[targetSquare].GetComponent<SquareBehaviour>().isRosette;
+        bool isFinish = aISquare[targetSquare].GetComponent<SquareBehaviour>().isFinish;
+        bool isKicking;
+
+        Debug.Log("targetSquare: " + targetSquare);
+        Debug.Log("squareTenant: " + squareTenant);
+        Debug.Log("isRosette: " + isRosette);
+        Debug.Log("isFinish: " + isFinish);
+        
+        if (squareTenant == SquareBehaviour.SquareTenant.White)
+        {
+            isKicking = true;
+            Debug.Log("BoardManager: AI isKicking = " + isKicking);
+            OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
+            //this event is being subscribed by the piece during DropPiece(), 
+            //and is being unsubscribe during FinalizePieceDrop()
+        }
+        else if (squareTenant == SquareBehaviour.SquareTenant.Empty)
+        {
+            isKicking = false;
+            Debug.Log("BoardManager: AI isKicking = " + isKicking);
+            OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
         }
     }
 

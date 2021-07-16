@@ -53,9 +53,9 @@ public class Respawn : MonoBehaviour {
             if (piece.transform.position.y < 0.5f)
             {
                 //respawn piece back on board spot
-                if (aistate.board[int.Parse(piece.gameObject.name) - 1] > 0)
+                if (aistate.pieces[int.Parse(piece.gameObject.name) - 1] > 0)
                 {
-                    piece.transform.position = boardspots[aistate.board[int.Parse(piece.gameObject.name) - 1]].transform.position;
+                    piece.transform.position = boardspots[aistate.pieces[int.Parse(piece.gameObject.name) - 1]].transform.position;
                 }
                 //respawn piece back to table
                 else
@@ -82,14 +82,14 @@ public class Respawn : MonoBehaviour {
                 {
                     if (it.name == p.name)
                     {
-                        if (aistate.board[int.Parse(p.name) - 1] == 0)
+                        if (aistate.pieces[int.Parse(p.name) - 1] == 0)
                         {
                             p.transform.position = PieceRespawn[int.Parse(p.gameObject.name) - 1].transform.position;
                             it.name = null;
                         }
                         else
                         {
-                            p.transform.position = boardspots[aistate.board[int.Parse(p.name) - 1]].transform.position;
+                            p.transform.position = boardspots[aistate.pieces[int.Parse(p.name) - 1]].transform.position;
                             it.name = null;
                         }
                     }

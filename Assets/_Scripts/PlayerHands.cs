@@ -106,7 +106,7 @@ public class PlayerHands : MonoBehaviour {
                 foreach (GameObject piece in pieces)
                 {
                     //grab piece
-                    if (Vector3.Magnitude(finger_pos - piece.transform.position) <= r && aistate.board[int.Parse(piece.name) - 1] != 15) // piece is close to players pinch
+                    if (Vector3.Magnitude(finger_pos - piece.transform.position) <= r && aistate.pieces[int.Parse(piece.name) - 1] != 15) // piece is close to players pinch
                     {
                         RaycastHit hit;
                         last_piece = count + 1; // which piece was last touched (i.e. dropped)
@@ -135,7 +135,7 @@ public class PlayerHands : MonoBehaviour {
                                 dropped_piece = -1;
                                 dropped_spot = -1;
 
-                                int p = aistate.board[int.Parse(piece.name)-1]; // value of piece
+                                int p = aistate.pieces[int.Parse(piece.name)-1]; // value of piece
                                 int highlightedspot = int.Parse(hit.collider.gameObject.name);
                                 // generate the 1 or 2 possible placement for piece grabbed
                                 newspot = p + diequad;
@@ -175,7 +175,7 @@ public class PlayerHands : MonoBehaviour {
                                             if (highlightedspot == 4 && diequad == 2)
                                             {
                                                 //another playerpiece is there
-                                                if (aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                                if (aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                                 {
                                                     /*[invalid move]*/
                                                     validmove = false;
@@ -207,7 +207,7 @@ public class PlayerHands : MonoBehaviour {
                                             if ((highlightedspot == 3 || highlightedspot == 7 || highlightedspot == 13) && diequad == 2)
                                             {
                                                 //another playerpiece is there
-                                                if (aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                                if (aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                                 {
                                                     /*[invalid move]*/
                                                     validmove = false;
@@ -215,7 +215,7 @@ public class PlayerHands : MonoBehaviour {
                                                     highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
                                                 }
                                                 //an enemy is there (only applies to spot 7
-                                                else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                                else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                                 {
                                                     //[valid move]
                                                     validmove = true;
@@ -254,7 +254,7 @@ public class PlayerHands : MonoBehaviour {
                                         if (diequad == 1 && diebool == 1 && highlightedspot == newspot2)
                                         {
                                             // check if another friendly piece is there
-                                            if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                            if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                             {
                                                 /*[invalid move]*/
                                                 validmove = false;
@@ -262,7 +262,7 @@ public class PlayerHands : MonoBehaviour {
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
                                             }
                                             // check if enemy piece is there
-                                            else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                            else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                             {
                                                 //[valid move]
                                                 validmove = true;
@@ -282,7 +282,7 @@ public class PlayerHands : MonoBehaviour {
                                                 dropped_spot = int.Parse(hit.collider.gameObject.name); //5
                                                 highlights[int.Parse(hit.collider.gameObject.name)].SetActive(true);
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.white);
-                                                if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                                if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                                 {
                                                     opponentknocked = true;
                                                 }
@@ -301,7 +301,7 @@ public class PlayerHands : MonoBehaviour {
                                         if (diequad == 2 && diebool == 1 && highlightedspot == newspot2)
                                         {
                                             // check if another friendly piece is there
-                                            if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                            if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                             {
                                                 /*[invalid move]*/
                                                 validmove = false;
@@ -309,7 +309,7 @@ public class PlayerHands : MonoBehaviour {
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
                                             }
                                             // check if enemy piece is there
-                                            else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                            else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                             {
                                                 //[valid move]
                                                 validmove = true;
@@ -330,7 +330,7 @@ public class PlayerHands : MonoBehaviour {
                                                 dropped_spot = int.Parse(hit.collider.gameObject.name); //6
                                                 highlights[int.Parse(hit.collider.gameObject.name)].SetActive(true);
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.white);
-                                                if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                                if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                                 {
                                                     opponentknocked = true;
                                                 }
@@ -349,7 +349,7 @@ public class PlayerHands : MonoBehaviour {
                                         if (diequad == 3 && diebool == 1 && highlightedspot == newspot2)
                                         {
                                             // check if another friendly piece is there
-                                            if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                            if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                             {
                                                 /*[invalid move]*/
                                                 validmove = false;
@@ -357,7 +357,7 @@ public class PlayerHands : MonoBehaviour {
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
                                             }
                                             // check if enemy piece is there
-                                            else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                            else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                             {
                                                 //[valid move]
                                                 validmove = true;
@@ -378,7 +378,7 @@ public class PlayerHands : MonoBehaviour {
                                                 dropped_spot = int.Parse(hit.collider.gameObject.name); //7
                                                 highlights[int.Parse(hit.collider.gameObject.name)].SetActive(true);
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.white);
-                                                if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                                if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                                 {
                                                     opponentknocked = true;
                                                 }
@@ -397,7 +397,7 @@ public class PlayerHands : MonoBehaviour {
                                         if (diequad == 4 && diebool == 1 && highlightedspot == newspot2)
                                         {
                                             // check if another friendly piece is there
-                                            if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                            if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                             {
                                                 /*[invalid move]*/
                                                 validmove = false;
@@ -405,7 +405,7 @@ public class PlayerHands : MonoBehaviour {
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.red);
                                             }
                                             // check if enemy piece is there
-                                            else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                            else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                             {
                                                 //[valid move]
                                                 validmove = true;
@@ -426,7 +426,7 @@ public class PlayerHands : MonoBehaviour {
                                                 dropped_spot = int.Parse(hit.collider.gameObject.name); //10
                                                 highlights[int.Parse(hit.collider.gameObject.name)].SetActive(true);
                                                 highlights[int.Parse(hit.collider.gameObject.name)].GetComponent<Renderer>().material.SetColor("_TintColor", Color.white);
-                                                if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                                if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                                 {
                                                     opponentknocked = true;
                                                 }
@@ -443,7 +443,7 @@ public class PlayerHands : MonoBehaviour {
                                     else
                                     {
                                         // check if another friendly piece is there
-                                        if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                        if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                         {
                                             // check if friendly rossette
                                             if (highlightedspot == 4 || highlightedspot == 8 || highlightedspot == 14)
@@ -467,7 +467,7 @@ public class PlayerHands : MonoBehaviour {
                                             }
                                         }
                                         // check if enemy piece is there
-                                        else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                        else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                         {
                                             // check if war rossette
                                             if (highlightedspot == 8)
@@ -520,7 +520,7 @@ public class PlayerHands : MonoBehaviour {
                                 // check if the spot highlighted by user is a valid spot    
                                 else if (highlightedspot == newspot || highlightedspot == newspot2) {
                                     // check if another friendly piece is there
-                                    if (aistate.board[0] == highlightedspot || aistate.board[1] == highlightedspot || aistate.board[2] == highlightedspot || aistate.board[3] == highlightedspot || aistate.board[4] == highlightedspot)
+                                    if (aistate.pieces[0] == highlightedspot || aistate.pieces[1] == highlightedspot || aistate.pieces[2] == highlightedspot || aistate.pieces[3] == highlightedspot || aistate.pieces[4] == highlightedspot)
                                     {
                                         // check if friendly rossette
                                         if (highlightedspot == 4 || highlightedspot == 8 || highlightedspot == 14)
@@ -556,7 +556,7 @@ public class PlayerHands : MonoBehaviour {
                                         }
                                     }
                                     // check if enemy piece is there
-                                    else if (aistate.board[5] == highlightedspot || aistate.board[6] == highlightedspot || aistate.board[7] == highlightedspot || aistate.board[8] == highlightedspot || aistate.board[9] == highlightedspot)
+                                    else if (aistate.pieces[5] == highlightedspot || aistate.pieces[6] == highlightedspot || aistate.pieces[7] == highlightedspot || aistate.pieces[8] == highlightedspot || aistate.pieces[9] == highlightedspot)
                                     {
                                         // check if war rossette
                                         if (highlightedspot == 8)
@@ -647,7 +647,7 @@ public class PlayerHands : MonoBehaviour {
                             if (validmove)
                             {
                                 //check for first move boolean
-                                if (aistate.board[dropped_piece-1] == 0)
+                                if (aistate.pieces[dropped_piece-1] == 0)
                                 {
                                     if (dropped_piece == 1 && firstturn_swallow)
                                     {
@@ -671,16 +671,16 @@ public class PlayerHands : MonoBehaviour {
                                     }
                                 }
                                 piece.transform.position = new Vector3(hit.collider.gameObject.transform.position.x, piece.transform.position.y, hit.collider.gameObject.transform.position.z);
-                                aistate.board[dropped_piece - 1] = dropped_spot;//aistate.board[int.Parse(piece.gameObject.name) - 1] = int.Parse(hit.collider.gameObject.name);
+                                aistate.pieces[dropped_piece - 1] = dropped_spot;//aistate.board[int.Parse(piece.gameObject.name) - 1] = int.Parse(hit.collider.gameObject.name);
                                 if (opponentknocked)
                                 {
-                                    for (int j = 5; j < 10; j++)
+                                    for (int j = 5; j < 10; j++)  //5-9 = black (AI) pieces
                                     {
-                                        if (aistate.board[j] == dropped_spot)
+                                        if (aistate.pieces[j] == dropped_spot)
                                         {
-                                            if (aistate.board[j] >= 5 && aistate.board[j] <= 12)
+                                            if (aistate.pieces[j] >= 5 && aistate.pieces[j] <= 12)
                                             {
-                                                aistate.board[j] = 0;
+                                                aistate.pieces[j] = 0;
                                                 aipieces[j - 5].transform.position = respawnspots[j].transform.position;
                                                 break;
                                             }
@@ -707,22 +707,22 @@ public class PlayerHands : MonoBehaviour {
                                 //move pieces in incorrect spots back after making a move
                                 for (int i = 0; i < pieces.Length; i++)
                                 {
-                                    if (pieces[i].transform.position.x != boardspots[aistate.board[i]].transform.position.x || pieces[i].transform.position.z != boardspots[aistate.board[i]].transform.position.z)
+                                    if (pieces[i].transform.position.x != boardspots[aistate.pieces[i]].transform.position.x || pieces[i].transform.position.z != boardspots[aistate.pieces[i]].transform.position.z)
                                     {
                                         if (!(i == dropped_piece-1))
                                         {
-                                            if (aistate.board[i] == 0)
+                                            if (aistate.pieces[i] == 0)
                                             {
                                                 Replace(pieces[i], respawnspots[i].transform);
                                                 //pieces[i].transform.position = respawnspots[i].transform.position;
                                             }
-                                            else if (aistate.board[i] == 15)
+                                            else if (aistate.pieces[i] == 15)
                                             {
                                                 //do nothing
                                             }
                                             else
                                             {
-                                                Replace(pieces[i], boardspots[aistate.board[i]]);
+                                                Replace(pieces[i], boardspots[aistate.pieces[i]]);
                                                 //pieces[i].transform.position = boardspots[aistate.board[i]].transform.position;
                                             }
                                             
@@ -865,7 +865,7 @@ public class PlayerHands : MonoBehaviour {
                         diequad = winnerquad;
                         diebool = winnerbool;
                         bool[] firsts = { firstturn_swallow, firstturn_stormbird, firstturn_raven, firstturn_rooster, firstturn_eagle };
-                        if (!AIScript.Helper.CanPlayerMove(aistate.board, firsts, diequad))
+                        if (!AIScript.Helper.CanPlayerMove(aistate.pieces, firsts, diequad))
                         {
                             if (diebool == 1)
                             {
@@ -880,7 +880,7 @@ public class PlayerHands : MonoBehaviour {
                                     quad2 = 10;
                                 else
                                     Debug.Log("Error diequad not 1-4");
-                                if (!AIScript.Helper.CanPlayerMove(aistate.board, firsts, quad2))
+                                if (!AIScript.Helper.CanPlayerMove(aistate.pieces, firsts, quad2))
                                 {
                                     //skip turn
                                     Debug.Log("Player has no available move");

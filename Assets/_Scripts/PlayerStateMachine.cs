@@ -111,7 +111,7 @@ public class PlayerStateMachine : MonoBehaviour {
                 if (piece_placed)
                 {
                     // if players pieces are all in spot 15, player wins
-                    if (aistate.board[0] == 15 && aistate.board[1] == 15 && aistate.board[2] == 15 && aistate.board[3] == 15 && aistate.board[4] == 15)
+                    if (aistate.pieces[0] == 15 && aistate.pieces[1] == 15 && aistate.pieces[2] == 15 && aistate.pieces[3] == 15 && aistate.pieces[4] == 15)
                     {
                         Debug.Log("Player Wins");
                         Time.timeScale = 0;

@@ -146,7 +146,7 @@ namespace AIScript
             int offset = whiteTurn ? -1 : 4;
             int enemyOffset = whiteTurn ? 4 : -1;
 
-            //knock off an enemy piece if attacked
+            //knock off the AI's piece if attacked
             for (int i = 1; i <= 5; ++i)
             {
                 if (newBoard[i + enemyOffset] == destination)
@@ -311,11 +311,8 @@ namespace AIScript
             //if a modified roll is provided, considers an unmodified roll as well
             if (roll >= 5)
             {
-                //convert modified roll to unmodified
-                int tempRoll = (roll == 5 ? 1 :
-                    (roll == 6 ? 2 :
-                    (roll == 7 ? 3 : 4
-                    )));
+                //convert total dice result to base number-dice result
+                int tempRoll = (roll == 5 ? 1 : (roll == 6 ? 2 : (roll == 7 ? 3 : 4 )));
 
                 //handle swallow special cases
                 if (board[5] == 0 && tempRoll == 2)

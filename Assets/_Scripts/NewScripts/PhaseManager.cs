@@ -48,8 +48,11 @@ public class PhaseManager : MonoBehaviour
     #endregion
 
     private List<GameObject> playerFinishedPieces;
-    private int maxFinishedPiece = 5;
-    private int currentFinishedPiece = 0;
+    private int maxPlayerFinishedPiece = 5;
+    private int currentPlayerFinishedPiece = 0;
+
+    private int maxAIFinishedPiece = 5;
+    private int currentAIFinishedPiece = 0;
 
     #region Start/OnDestroy
     void Start()
@@ -64,7 +67,7 @@ public class PhaseManager : MonoBehaviour
         DiceBehaviour.OnDiceBoolResult += DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropFinalized += PieceDropCheck;
         PieceBehaviour.OnPieceFinish += PieceFinishCheck;
-        BoardManager.OnLegalMoveAvailable += SkipPieceMove;
+        BoardManager.OnLegalMoveAvailable += PlayerSkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished += SwitchToPlayerTurn;
 
         switchPlayer.action.Enable(); //TEMP
@@ -77,16 +80,14 @@ public class PhaseManager : MonoBehaviour
         DiceBehaviour.OnDiceBoolResult -= DiceBoolResultCheck;
         PieceBehaviour.OnPieceDropFinalized -= PieceDropCheck;
         PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
-        BoardManager.OnLegalMoveAvailable -= SkipPieceMove;
+        BoardManager.OnLegalMoveAvailable -= PlayerSkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished -= SwitchToPlayerTurn;
 
         switchPlayer.action.Disable(); //TEMP
     }
     #endregion
 
-
-
-    #region DiceResultObserver
+    #region PlayerDiceResultObserver
     private void DiceNumberResultCheck(int numResult, bool aIDice)
     {
         if(!aIDice)
@@ -127,9 +128,9 @@ public class PhaseManager : MonoBehaviour
     }
     #endregion
 
-    private void SkipPieceMove(int legalMoveAmount)
+    private void PlayerSkipPieceMove(int playerLegalMoveAmount)
     {
-        if(legalMoveAmount <= 0)
+        if(playerLegalMoveAmount <= 0)
         {
             playerState = PlayerState.Waiting;
             worldState = WorldState.aiTurn;
@@ -139,53 +140,81 @@ public class PhaseManager : MonoBehaviour
         }
     }
 
-    private void PieceDropCheck(bool legalDrop, bool isRosette)
+    private void PieceDropCheck(bool legalDrop, bool isRosette, bool isPlayerPiece)
     {
         if(legalDrop)
         {
-            if(!isRosette)
+            if(isPlayerPiece)
+            {
+                if (!isRosette)
+                {
+                    playerState = PlayerState.Waiting;
+                    worldState = WorldState.aiTurn;
+
+                    OnExitPieceMove?.Invoke(this);
+                    OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+                }
+
+                else if (isRosette)
+                {
+                    playerState = PlayerState.Delay;
+
+                    OnExitPieceMove?.Invoke(this);
+                    OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+                }
+            }
+
+        }
+        //pieceMoved = legalDrop;
+    }
+
+    private void PieceFinishCheck(GameObject piece, bool playerPiece)
+    {
+        OnDebugText?.Invoke(piece.gameObject.name + " just land on the finish square");
+        //playerFinishedPieces.Add(piece.gameObject);
+
+        if(playerPiece)
+        {
+            currentPlayerFinishedPiece += 1;
+
+            if (currentPlayerFinishedPiece >= maxPlayerFinishedPiece)
+            {
+                Debug.Log("PLAYER WIN");
+                OnDebugText?.Invoke("Player WIN!!");
+                worldState = WorldState.playerWin;
+
+                //Win event
+            }
+
+            else if (currentPlayerFinishedPiece < maxPlayerFinishedPiece)
             {
                 playerState = PlayerState.Waiting;
                 worldState = WorldState.aiTurn;
 
                 OnExitPieceMove?.Invoke(this);
-                OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+                OnPhaseChange?.Invoke(playerState.ToString());
             }
+        }
 
-            else if(isRosette)
+        if(!playerPiece) //if AI piece's land on finish
+        {
+            currentAIFinishedPiece += 1;
+
+            if(currentAIFinishedPiece >= maxAIFinishedPiece)
             {
-                playerState = PlayerState.Delay;
+                Debug.Log("AI WIN");
+                OnDebugText?.Invoke("Player LOSE!!");
+                worldState = WorldState.aiWin;
 
-                OnExitPieceMove?.Invoke(this);
-                OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+                //Lose event
+            }
+            
+            else if (currentAIFinishedPiece < maxAIFinishedPiece)
+            {
+
             }
         }
-        //pieceMoved = legalDrop;
-    }
 
-    private void PieceFinishCheck(GameObject piece)
-    {
-        OnDebugText?.Invoke(piece.gameObject.name + " just land on the finish square");
-        //playerFinishedPieces.Add(piece.gameObject);
-        currentFinishedPiece += 1;
-
-        if (currentFinishedPiece >= maxFinishedPiece)
-        {
-            Debug.Log("PLAYER WIN");
-            OnDebugText?.Invoke("Player WIN!!");
-            worldState = WorldState.playerWin;
-
-            //Win event
-        }
-
-        else if (currentFinishedPiece < maxFinishedPiece)
-        {
-            playerState = PlayerState.Waiting;
-            worldState = WorldState.aiTurn;
-
-            OnExitPieceMove?.Invoke(this);
-            OnPhaseChange?.Invoke(playerState.ToString());
-        }
     }
 
     private void PieceMoveCheck() //On piece moved

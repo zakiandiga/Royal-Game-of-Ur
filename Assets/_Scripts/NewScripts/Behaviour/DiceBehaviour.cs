@@ -189,7 +189,7 @@ public class DiceBehaviour : MonoBehaviour
                 Debug.Log(this.gameObject.name + " DiceCheck error");
             }
 
-            Debug.Log(this.gameObject.name + " is thrown");
+            //Debug.Log(this.gameObject.name + " is thrown");
             //grabCollider.enabled = false;
             //StartCoroutine(NumberResultDelay());
             OnDiceNumberResult?.Invoke(rollResult, aIDice);
@@ -279,7 +279,7 @@ public class DiceBehaviour : MonoBehaviour
 
                 if (rb.velocity.magnitude <= 0.0001f)
                 {                    
-                    Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
+                    //Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
 
                     this.DiceCheck();
 
@@ -292,7 +292,7 @@ public class DiceBehaviour : MonoBehaviour
             case DiceState.AI_Throw:
                 if (rb.velocity.magnitude <= 0.0001f)
                 {
-                    Debug.Log(this.gameObject.name + " stop falling, now DiceCheck()");
+                    //Debug.Log(this.gameObject.name + " stop falling, now DiceCheck()");
                     this.DiceCheck();
                     
                     this.diceState = DiceState.Waiting;

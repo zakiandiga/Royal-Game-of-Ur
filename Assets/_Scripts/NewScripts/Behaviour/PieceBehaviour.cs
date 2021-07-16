@@ -30,21 +30,21 @@ public class PieceBehaviour : MonoBehaviour
     #region MovementProperty
     private bool legalDrop = false;
     public bool hasValidMove = false;
+    private bool onStartingSpot = true;
     private bool onFinishSpot = false;
     private int diceResult;
 
     //private List<int> squareIndexes;
     public int currentSquare = 0;
-    public int targetSquare = 0;
+    public int playerTargetSquare = 0;
+    public int aiTargetSquare = 0;
     public int finishSquare = 16;
     private int finishSquareIndex = 15;
     private string targetHit;
-
-
     #endregion
 
 
-    [SerializeField] private InputActionReference raycasting; //temp
+    [SerializeField] private InputActionReference raycasting; //temp DEBUG
 
     #region Event Announcer
     public static event Action<GameObject, string> OnPieceStateCheck;
@@ -52,11 +52,11 @@ public class PieceBehaviour : MonoBehaviour
     public static event Action<int> OnHoveringPieces;
     public static event Action<PieceBehaviour> OnExitPieceCollider;
     public static event Action<string, bool> OnRaycastHit;
-    public static event Action<bool, int> OnPieceDropped;
 
-    public static event Action<bool, bool> OnPieceDropFinalized;
-
-    public static event Action<GameObject> OnPieceFinish;
+    public static event Action<bool, int, bool> OnPieceDropped;
+    public static event Action<GameObject> OnPieceBackToStart;
+    public static event Action<bool, bool, bool> OnPieceDropFinalized;
+    public static event Action<GameObject, bool> OnPieceFinish;
 
     public static event Action<string> OnDebugText;
 
@@ -80,7 +80,7 @@ public class PieceBehaviour : MonoBehaviour
         Eagle,
     }
 
-    [SerializeField] private PieceState pieceState = PieceState.Waiting;
+    public PieceState pieceState = PieceState.Waiting; //switched to public for existing AI handle
     public enum PieceState
     {
         Waiting,  //Pieces not interactable
@@ -88,7 +88,9 @@ public class PieceBehaviour : MonoBehaviour
         Grabable, //Pieces can be grab
         OnHand,   //A piece is currently grabbed
         Dropped,  //Piece is dropped on board
-        Finished
+        AIMoving, //Piece is being moved by the AI (On the AI hand)
+        AIDroped, //Piece is dropped by the AI
+        Finished  //Piece entered the finish spot
         
     }
     #endregion
@@ -117,21 +119,37 @@ public class PieceBehaviour : MonoBehaviour
     private void OnEnable()
     {
         //PhaseManager.OnExitDiceRoll += DiceResultCheck;
-        BoardManager.OnLegalMoveAvailable += ReadyingPiece;        
-        HandPresence.OnEnterGrip += PieceGrabEnter;
-        HandPresence.OnExitGrab += PieceGrabExit;
+        if(pieceOwner == PieceOwner.Player)
+        {
+            BoardManager.OnLegalMoveAvailable += ReadyingPiece;
+            HandPresence.OnEnterGrip += PieceGrabEnter;
+            HandPresence.OnExitGrab += PieceGrabExit;
+        }
 
-        raycasting.action.Enable(); //temp, testing raycast with button
+        else if (pieceOwner == PieceOwner.AI)
+        {
+
+        }
+
+        raycasting.action.Enable(); //temp debug, testing raycast with button
     }
 
     private void OnDisable()
     {
         //PhaseManager.OnExitDiceRoll -= DiceResultCheck;
-        BoardManager.OnLegalMoveAvailable -= ReadyingPiece;        
-        HandPresence.OnEnterGrip -= PieceGrabEnter;
-        HandPresence.OnExitGrab -= PieceGrabExit;
+        if(pieceOwner == PieceOwner.Player)
+        {
+            BoardManager.OnLegalMoveAvailable -= ReadyingPiece;
+            HandPresence.OnEnterGrip -= PieceGrabEnter;
+            HandPresence.OnExitGrab -= PieceGrabExit;
+        }
 
-        raycasting.action.Disable(); //temp, testing raycast with button
+        else if (pieceOwner == PieceOwner.AI)
+        {
+
+        }
+
+        raycasting.action.Disable(); //temp debug, testing raycast with button
     }
 
     #region old check legal move method
@@ -164,6 +182,38 @@ public class PieceBehaviour : MonoBehaviour
     */
     #endregion
 
+    #region AIMovementFunctions
+    public void AIMovePiece(int destination)
+    {
+        if (pieceOwner == PieceOwner.AI)
+        {
+            if (pieceState != PieceState.AIMoving)
+            {
+                this.rb.isKinematic = true;
+                aiTargetSquare = destination;
+                Debug.Log(gameObject.name + " is being moved by the AI");
+                pieceState = PieceState.AIMoving;
+                //AIAnimationStateMachine.OnPieceDropAI += PieceDropAI;
+
+            }
+        }
+    }
+
+    public void AIDropPiece()
+    {
+        if (pieceOwner == PieceOwner.AI)
+        {
+
+            if (pieceState != PieceState.AIDroped)
+            {
+                Debug.Log("PieceBehaviour: AIDropPiece() called");
+                DropPiece();
+                pieceState = PieceState.AIDroped;
+            }
+        }
+    }        
+    #endregion
+
     private void ReadyingPiece(int legalMoveAmount)
     {
         PhaseManager.OnExitPieceMove += PieceMoveConfirmed;
@@ -186,9 +236,9 @@ public class PieceBehaviour : MonoBehaviour
 
         if(legalMoveAmount > 0)
         {
-            if (targetSquare > finishSquareIndex) //Temporary finish square handler
+            if (playerTargetSquare > finishSquareIndex) //Temporary finish square handler
             {
-                targetSquare = finishSquareIndex;
+                playerTargetSquare = finishSquareIndex;
             }
 
             if (hasValidMove || !onFinishSpot)
@@ -229,7 +279,7 @@ public class PieceBehaviour : MonoBehaviour
 
                 OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
                 
-                OnHoveringPieces?.Invoke(targetSquare);
+                OnHoveringPieces?.Invoke(playerTargetSquare);
                 OnDebugText?.Invoke("This piece HAS A VALID MOVE");
                 //'Tell' board (PhaseManager) to green higlight legal square for this.piece
             }                               
@@ -266,7 +316,7 @@ public class PieceBehaviour : MonoBehaviour
         }
     }
 
-    private void RaycastingTest() //Triggered on Update()
+    private void BoardCheckRaycast() //Triggered on Update()
     {
         float range = 500f;
         targetHit = null;
@@ -278,26 +328,32 @@ public class PieceBehaviour : MonoBehaviour
         Debug.DrawRay(transform.position, Vector3.down, Color.red, 1, true);
         if (Physics.Raycast(ray, out hit, range, pieceHitMask))
         {
-
-            if (targetHit == null || targetHit != hit.transform.name)
+            if(pieceOwner == PieceOwner.Player)
             {
-                targetHit = hit.transform.name;
-                int.TryParse(targetHit, out targetHitConvert);
-                //Debug.Log("Hit on " + targetHitConvert);
-                
-
-                if(targetHitConvert == targetSquare)
+                if (targetHit == null || targetHit != hit.transform.name)
                 {
-                    targetPosition = hit.transform.position;                    
-                    OnRaycastHit?.Invoke(hit.transform.name, true);
-                }
-                else if (targetHitConvert != targetSquare)
-                {
-                    OnRaycastHit?.Invoke(hit.transform.name, false);
-                }
+                    targetHit = hit.transform.name;
+                    int.TryParse(targetHit, out targetHitConvert);
+                    //Debug.Log("Hit on " + targetHitConvert);
 
+
+                    if (targetHitConvert == playerTargetSquare)
+                    {
+                        targetPosition = hit.transform.position;
+                        OnRaycastHit?.Invoke(hit.transform.name, true);
+                    }
+                    else if (targetHitConvert != playerTargetSquare)
+                    {
+                        OnRaycastHit?.Invoke(hit.transform.name, false);
+                    }
+
+                }
             }
 
+            if(pieceOwner == PieceOwner.AI)
+            {
+                targetPosition = hit.transform.position;
+            }
             previousHit = hit;
 
         }
@@ -318,42 +374,59 @@ public class PieceBehaviour : MonoBehaviour
         
     private void DropPiece()
     {
-        if (targetHit != targetSquare.ToString()) //illegal square drop
+        bool isPlayerPiece;
+        if(pieceOwner == PieceOwner.AI)
         {
-            transform.rotation = defaultRotation;
-            transform.position = currentPosition; //Move the piece back to the current square
-
-            legalDrop = false;
-            Debug.Log("Illegal DROP");
-
-            pieceState = PieceState.Ready;
-            OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
-
-            //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
-        }
-
-        else if (targetHit == targetSquare.ToString()) //Legal square drop
-        {
-            Debug.Log("LEGAL DROP");
-            legalDrop = true;
-
+            //AI piecedrop handling
+            //assume AI piecedrop always legal (handled by AI script)
+            isPlayerPiece = false;
+            legalDrop = true; //legalDrop from AI always true
+            //this.rb.isKinematic = false;
             BoardManager.OnPieceDropHandlerDone += FinalizePieceDrop;
-
-            OnPieceDropped?.Invoke(legalDrop, targetSquare);
-            
-            //this.grabCollider = false;
+            OnPieceDropped?.Invoke(legalDrop, aiTargetSquare, isPlayerPiece);
         }
+
+        else if(pieceOwner == PieceOwner.Player)
+        {
+            isPlayerPiece = true;
+            if (targetHit != playerTargetSquare.ToString()) //illegal square drop
+            {
+                transform.rotation = defaultRotation;
+                transform.position = currentPosition; //Move the piece back to the current square
+
+                legalDrop = false;
+                Debug.Log("Illegal DROP");
+
+                pieceState = PieceState.Ready;
+                OnPieceStateCheck?.Invoke(this.gameObject, pieceState.ToString());  //PieceState ANNOUNCER
+
+                //TELL PLAYER THAT THE MOVE IS ILLEGAL (UI and sound)
+            }
+
+            else if (targetHit == playerTargetSquare.ToString()) //Legal square drop
+            {
+                Debug.Log("LEGAL DROP");
+                legalDrop = true;
+
+                BoardManager.OnPieceDropHandlerDone += FinalizePieceDrop;
+
+                OnPieceDropped?.Invoke(legalDrop, playerTargetSquare, isPlayerPiece);
+
+                //this.grabCollider = false;
+            }
+        }
+        
     }
 
 
     private void FinalizePieceDrop(bool isRosette, bool isKicking, bool isFinish)
     {
         BoardManager.OnPieceDropHandlerDone -= FinalizePieceDrop;
-        
+        bool isPlayerPiece;
 
         if (!isKicking)
         {
-            if (isFinish)
+            if (isFinish) //finish drop
             {
                 //Polish, animate piece movement to goalSpawner
                 transform.rotation = defaultRotation;
@@ -365,18 +438,35 @@ public class PieceBehaviour : MonoBehaviour
                 PieceFinishProcession();
             }
 
-            if(!isFinish)
+            if(!isFinish) //regular drop
             {
                 transform.rotation = defaultRotation;
                 transform.position = targetPosition; //Vector3.Lerp(releasePosition, targetPosition, lerpTime * Time.deltaTime);
                 currentPosition = transform.position; //Update currentPosition value
 
-                this.currentSquare = targetSquare; //Should check BoardManager for the latest square of this.piece
-                OnPieceDropFinalized?.Invoke(legalDrop, isRosette);
+
+                if (pieceOwner == PieceOwner.Player)
+                {
+                    this.currentSquare = playerTargetSquare; //Should check BoardManager for the latest square of this.piece
+                    isPlayerPiece = true;
+                    Debug.Log("Regular drop executed (player)");
+                    OnPieceDropFinalized?.Invoke(legalDrop, isRosette, isPlayerPiece);
+                }
+                else if (pieceOwner == PieceOwner.AI)
+                {
+                    //Tell AIAnimationStateMachine AI_State to switch to S_IKtoWAIT
+                    //pass isRosette = false info
+                    this.currentSquare = aiTargetSquare;
+                    isPlayerPiece = false;
+                    Debug.Log("Regular drop executed (AI)");
+                    OnPieceDropFinalized?.Invoke(legalDrop, isRosette, isPlayerPiece);
+                    Debug.Log("PieceBehaviour: AI Piece finishing piecedrop");
+                }
+                
             } 
         }
 
-        if(isKicking)
+        else if(isKicking) //kicking drop
         {
             KickOpponentPiece(isRosette);
         }
@@ -397,6 +487,7 @@ public class PieceBehaviour : MonoBehaviour
             PieceBehaviour opponentPiece = hitResult.GetComponent<PieceBehaviour>();
             OnDebugText?.Invoke("Kick a piece: " + hitResult.name);
 
+            Debug.Log("PieceBehaviour: Kicking " + opponentPiece.gameObject.name);
             if (hitResult != null)
             {
                 opponentPiece.BackToStart();
@@ -412,6 +503,9 @@ public class PieceBehaviour : MonoBehaviour
     {
         //triggered from KickOpponentPiece()
         transform.position = this.startSpawner.position;
+        currentPosition = transform.position;
+        this.currentSquare = 0;
+        OnPieceBackToStart?.Invoke(this.gameObject);
                 
         //Polish notes: 
         //Animate the kicking sequence
@@ -420,11 +514,23 @@ public class PieceBehaviour : MonoBehaviour
 
     private void PieceFinishProcession()
     {
+        bool playerPiece;
         pieceState = PieceState.Finished;
         this.onFinishSpot = true;
         transform.position = goalSpawner.position;
         currentPosition = transform.position; //Lock the piece position on the finish spot
-        OnPieceFinish?.Invoke(this.gameObject);
+
+        if (pieceOwner == PieceOwner.Player)
+        {
+            playerPiece = true;
+            OnPieceFinish?.Invoke(this.gameObject, playerPiece);
+        }            
+        else if (pieceOwner == PieceOwner.AI)
+        {
+            playerPiece = false;
+            OnPieceFinish?.Invoke(this.gameObject, playerPiece);
+        }
+            
     }
 
     private void PieceMoveConfirmed(PhaseManager phase)
@@ -458,7 +564,7 @@ public class PieceBehaviour : MonoBehaviour
     {
         if(raycasting.action.triggered)
         {
-            RaycastingTest();
+            BoardCheckRaycast();
         }
 
         switch (pieceState)
@@ -481,7 +587,7 @@ public class PieceBehaviour : MonoBehaviour
                 break;
 
             case PieceState.OnHand:                
-                RaycastingTest();                
+                BoardCheckRaycast();                
                 break;
 
             case PieceState.Dropped:
@@ -489,6 +595,10 @@ public class PieceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
+                break;
+
+            case PieceState.AIMoving:
+                BoardCheckRaycast();
                 break;
 
             case PieceState.Finished:
