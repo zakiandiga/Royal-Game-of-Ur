@@ -33,6 +33,7 @@ public class PieceBehaviour : MonoBehaviour
     private bool onStartingSpot = true;
     private bool onFinishSpot = false;
     private int diceResult;
+    public bool hasLaunched = false;
 
     //private List<int> squareIndexes;
     public int currentSquare = 0;
@@ -533,7 +534,7 @@ public class PieceBehaviour : MonoBehaviour
             
     }
 
-    private void PieceMoveConfirmed(PhaseManager phase)
+    private void PieceMoveConfirmed(string phase)
     {
         PhaseManager.OnExitPieceMove -= PieceMoveConfirmed;
 

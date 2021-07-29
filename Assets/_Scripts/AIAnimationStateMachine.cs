@@ -7,6 +7,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     public static event Action<string> AI_TurnFinished;
     public static event Action<string> OnDiceThrownAI;
+    public static event Action<int> OnAIDiceResultChecked;
+    public static event Action<string> OnAIDiceResultResetted;
     public static event Action<string> OnPieceDropAI;
  
     public AI_STATES state;
@@ -17,7 +19,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
     private AIScript.AI ai;
     AIScript.AI.Move turn;
     [Tooltip("Difficulty: Easiest (1) -> Hardest (inf)")]
-    public int depth = 1;
+    public int depth = 2;
     int currentTargetPiece;  //Zak: change the name from aipiece;
 
     public GameObject playercam;
@@ -285,6 +287,8 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
         numDiceRolled = false;
         boolDiceRolled = false;
+
+        OnAIDiceResultResetted?.Invoke("AI dice reset");
     }
     #endregion
     #region PiecePositionChecks
@@ -503,6 +507,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     if (totalDiceResult > 0)
                     {
                         Debug.Log("AI: Dice Result CHECKED, Result = " + totalDiceResult);
+                        OnAIDiceResultChecked?.Invoke(totalDiceResult);
                         state = AI_STATES.S_CALCULATETURN;
                     }
                 }

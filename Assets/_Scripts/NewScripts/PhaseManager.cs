@@ -41,7 +41,7 @@ public class PhaseManager : MonoBehaviour
     public static event Action<PhaseManager> OnEnterDiceRoll;
     public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
-    public static event Action<PhaseManager> OnExitPieceMove;
+    public static event Action<string> OnExitPieceMove;
     public static event Action<PhaseManager> OnAITurnStart;
 
     public static event Action<string> OnDebugText;
@@ -123,7 +123,7 @@ public class PhaseManager : MonoBehaviour
                 totalDiceResult = numberDiceResult + 4;
             else if (numberDiceResult == 4)
                 totalDiceResult = 10;
-        }
+        }        
         Debug.Log("Total Dice result = " + totalDiceResult);
     }
     #endregion
@@ -135,7 +135,7 @@ public class PhaseManager : MonoBehaviour
             playerState = PlayerState.Waiting;
             worldState = WorldState.aiTurn;
 
-            OnExitPieceMove?.Invoke(this);
+            OnExitPieceMove?.Invoke("player skip");
             OnPhaseChange?.Invoke(playerState.ToString()); //for UI
         }
     }
@@ -151,7 +151,7 @@ public class PhaseManager : MonoBehaviour
                     playerState = PlayerState.Waiting;
                     worldState = WorldState.aiTurn;
 
-                    OnExitPieceMove?.Invoke(this);
+                    OnExitPieceMove?.Invoke("player dropped piece");
                     OnPhaseChange?.Invoke(playerState.ToString()); //for UI
                 }
 
@@ -159,7 +159,7 @@ public class PhaseManager : MonoBehaviour
                 {
                     playerState = PlayerState.Delay;
 
-                    OnExitPieceMove?.Invoke(this);
+                    OnExitPieceMove?.Invoke("player rosette");
                     OnPhaseChange?.Invoke(playerState.ToString()); //for UI
                 }
             }
@@ -191,7 +191,7 @@ public class PhaseManager : MonoBehaviour
                 playerState = PlayerState.Waiting;
                 worldState = WorldState.aiTurn;
 
-                OnExitPieceMove?.Invoke(this);
+                OnExitPieceMove?.Invoke("player finishing piece");
                 OnPhaseChange?.Invoke(playerState.ToString());
             }
         }
