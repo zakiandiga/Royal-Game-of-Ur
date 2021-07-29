@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5664134475142008911}
   - component: {fileID: 5664134475142008899}
   - component: {fileID: 5664134474777843048}
-  m_Layer: 31
+  m_Layer: 30
   m_Name: White Piece Swallow
   m_TagString: swallow
   m_Icon: {fileID: 0}
@@ -34,6 +34,7 @@ Transform:
   m_LocalScale: {x: 1.5, y: 1.5000007, z: 0.25}
   m_Children:
   - {fileID: 5664134476747050020}
+  - {fileID: 531568094238990569}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 0}
@@ -63,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 143878a512b73294aae89accae277ae1, type: 2}
+  - {fileID: 2100000, guid: 367080580e1dc76469966243c97e5434, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -99,7 +100,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 2
   m_Constraints: 80
-  m_CollisionDetection: 2
+  m_CollisionDetection: 3
 --- !u!65 &5664134475142008911
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -125,16 +126,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fff37f5e3e0694545a56838001adf7cb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  interactableOn:
+    serializedVersion: 2
+    m_Bits: 2048
+  interactableOff:
+    serializedVersion: 2
+    m_Bits: 0
   startSpawner: {fileID: 0}
   goalSpawner: {fileID: 0}
   pieceHitMask:
     serializedVersion: 2
     m_Bits: 16384
-  occupiedSquares: 0000000000000000000000000000000000000000
+  opponentHitMask:
+    serializedVersion: 2
+    m_Bits: 2147483648
+  hasValidMove: 0
+  hasLaunched: 0
+  currentSquare: 0
+  playerTargetSquare: 0
+  aiTargetSquare: 0
+  finishSquare: 16
   raycasting: {fileID: 8905358875973236337, guid: f26affc14c3ac2048a1673f6cb728e12,
     type: 3}
-  pieceOwner: 0
+  pieceOwner: 1
   pieceType: 0
+  pieceState: 0
 --- !u!114 &5664134474777843048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,7 +168,7 @@ MonoBehaviour:
   - {fileID: 5664134476747050021}
   m_InteractionLayerMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2048
   m_OnFirstHoverEntered:
     m_PersistentCalls:
       m_Calls: []
@@ -224,7 +240,7 @@ GameObject:
   - component: {fileID: 5664134476747050020}
   - component: {fileID: 5664134476747050021}
   - component: {fileID: 5664134476747050042}
-  m_Layer: 31
+  m_Layer: 30
   m_Name: PieceGrabCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -270,3 +286,78 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77b8bfb8081fc6a448ccaac4537dfeac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &415135741929121913
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 5664134474777676107}
+    m_Modifications:
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662871199080, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_Name
+      value: InteractableParticle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0, type: 3}
+--- !u!4 &531568094238990569 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 415135741929121913}
+  m_PrefabAsset: {fileID: 0}

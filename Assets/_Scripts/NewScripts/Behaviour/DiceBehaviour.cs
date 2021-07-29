@@ -13,6 +13,7 @@ public class DiceBehaviour : MonoBehaviour
 
     [SerializeField] private LayerMask interactableOn;
     [SerializeField] private LayerMask interactableOff;
+    [SerializeField] private LayerMask pieceLayer;
 
     private float diceFallTreshold = 0.5f;
     private float resultDelay = 1.2f;
@@ -66,9 +67,11 @@ public class DiceBehaviour : MonoBehaviour
         grabCollider = GetComponentInChildren<SphereCollider>();
         particle = GetComponentInChildren<ParticleSystem>();
 
+        Physics.IgnoreLayerCollision(this.gameObject.layer, pieceLayer, true);
+
         //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete
         Debug.Log("Starting dice state = " + diceState);
-  
+         
     }    
 
     private void OnEnable()
@@ -103,10 +106,8 @@ public class DiceBehaviour : MonoBehaviour
 #region PlayerDiceInteractableSwitch
     private void ReadyingDice(PhaseManager phase)
     {
-        diceState = DiceState.Ready;
-        particle.Play();
-        OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
-      
+        diceState = DiceState.Ready;        
+        OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI      
     }
 #endregion
 
@@ -139,7 +140,7 @@ public class DiceBehaviour : MonoBehaviour
         if(diceState == DiceState.Grabable) // && interactable)
         {
             diceState = DiceState.OnHand;
-            particle.Stop();
+
             OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             Debug.Log(this.gameObject.name + " ON HAND");
         }        
@@ -254,6 +255,11 @@ public class DiceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
+
+                if (particle.isEmitting)
+                {                    
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 break;
             case DiceState.Ready:
                 //Things to Update() during idle
@@ -261,15 +267,26 @@ public class DiceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOn;
                 }
-                
+                if(!particle.isEmitting && !aIDice)
+                {                    
+                    particle.Play();
+                }                
                 break;
             case DiceState.Grabable:
                 //Things to Update() during grabable
+                if (!particle.isEmitting && !aIDice)
+                {                    
+                    particle.Play();
+                }
                 break;
             case DiceState.OnHand:
                 //Things to Update() during OnHand
                 //run physic based on hand movement
                 //Keep track on velocity
+                if(particle.isEmitting)
+                {                    
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 break;
             case DiceState.Thrown:
                 //bool CheckResult() until return true
@@ -278,7 +295,10 @@ public class DiceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
-
+                if (particle.isEmitting)
+                {                    
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 if (rb.velocity.magnitude <= 0.0001f)
                 {                    
                     //Debug.Log("Current Dice State = " + diceState + ", " + this.gameObject.name + " collider disabled");
