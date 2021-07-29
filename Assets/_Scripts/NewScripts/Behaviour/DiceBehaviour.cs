@@ -8,6 +8,7 @@ public class DiceBehaviour : MonoBehaviour
     //Set dice layers to dice (Dice should not collide with other dices)
     private XRGrabInteractable grabControl;
     private Rigidbody rb;
+    private ParticleSystem particle;
     [SerializeField] private Transform spawner;
 
     [SerializeField] private LayerMask interactableOn;
@@ -63,6 +64,7 @@ public class DiceBehaviour : MonoBehaviour
         rb = GetComponent<Rigidbody>();        
         grabControl = GetComponent<XRGrabInteractable>();
         grabCollider = GetComponentInChildren<SphereCollider>();
+        particle = GetComponentInChildren<ParticleSystem>();
 
         //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete
         Debug.Log("Starting dice state = " + diceState);
@@ -102,7 +104,7 @@ public class DiceBehaviour : MonoBehaviour
     private void ReadyingDice(PhaseManager phase)
     {
         diceState = DiceState.Ready;
-        
+        particle.Play();
         OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
       
     }
@@ -137,7 +139,7 @@ public class DiceBehaviour : MonoBehaviour
         if(diceState == DiceState.Grabable) // && interactable)
         {
             diceState = DiceState.OnHand;
-
+            particle.Stop();
             OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
             Debug.Log(this.gameObject.name + " ON HAND");
         }        
