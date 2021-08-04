@@ -386,7 +386,7 @@ public class PieceBehaviour : MonoBehaviour
             //assume AI piecedrop always legal (handled by AI script)
             isPlayerPiece = false;
             legalDrop = true; //legalDrop from AI always true
-            //this.rb.isKinematic = false;
+            this.rb.isKinematic = false;
             BoardManager.OnPieceDropHandlerDone += FinalizePieceDrop;
             OnPieceDropped?.Invoke(legalDrop, aiTargetSquare, isPlayerPiece);
         }

@@ -196,7 +196,7 @@ MonoBehaviour:
     m_Bits: 16384
   opponentHitMask:
     serializedVersion: 2
-    m_Bits: 2147483648
+    m_Bits: 536870912
   hasValidMove: 0
   hasLaunched: 0
   currentSquare: 0

@@ -98,7 +98,8 @@ namespace AIScript
         //does the destination match a rosette on the board?
         private bool IsSafe(int position)
         {
-            return position == 4 || position == 8 || position == 14 || position == 15;
+            //return position == 4 || position == 8 || position == 14 || position == 15;
+            return position == 4 || position == 15;
         }
 
         //is there a white or black piece on the board at that destination?

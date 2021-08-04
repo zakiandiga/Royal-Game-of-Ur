@@ -6,6 +6,7 @@ using UnityEngine;
 public class AIAnimationStateMachine : MonoBehaviour {
 
     public static event Action<string> AI_TurnFinished;
+    public static event Action<string> OnAIPieceLocationUpdate;
     public static event Action<string> OnDiceThrownAI;
     public static event Action<int> OnAIDiceResultChecked;
     public static event Action<string> OnAIDiceResultResetted;
@@ -295,6 +296,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
     private void PiecesLocationUpdate()
     {
         Debug.Log("PIECE LOCATION UPDATE");
+        OnAIPieceLocationUpdate?.Invoke("AI");
         for (int i = 0; i<boardpieces.Length; i++)
         {
             pieces[i] = boardpieces[i].gameObject.GetComponent<PieceBehaviour>().currentSquare;
@@ -369,10 +371,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 {
                     currentPieceBehaviour = null;
                 }
-                if(currentRigidBody != null)
-                {
-                    currentRigidBody = null;
-                }
+                
 
                 lookdestination = playercam.transform.position;
                 look_lerpspeed = 5f;
@@ -534,7 +533,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
                     ResetDiceResult();
 
-                    AI_TurnFinished?.Invoke("Move Unavailable"); //Notify PhaseManager to switch to player turn
+                    AI_TurnFinished?.Invoke("AI skip"); //Notify PhaseManager to switch to player turn
                     break;
                 }
                 aiboolLight.SetActive(true);
@@ -735,13 +734,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 //Define the current turn's target piece GameObject based on the latest currentTargetPiece
                 currentTargetPieceGameObject = boardpieces[currentTargetPiece].gameObject;
                 currentPieceBehaviour = currentTargetPieceGameObject.GetComponent<PieceBehaviour>(); //and its PieceBehaviour component
-                currentRigidBody = currentTargetPieceGameObject.GetComponent<Rigidbody>(); //and its RigidBody  
+                
 
-                Debug.Log("currentTargetPiece = " + currentTargetPiece);
-                Debug.Log("AI: Going to move " + boardpieces[currentTargetPiece].gameObject.name);
-                Debug.Log("AI PieceBehaviour: " + boardpieces[currentTargetPiece].gameObject.GetComponent<PieceBehaviour>().gameObject.name);
-                Debug.Log("AI currentPieceBehaviour " + currentPieceBehaviour.gameObject.name);
-                Debug.Log("AI: destination = " + turn.destination);
+
                 //currentRigidBody.isKinematic = true;
                 currentPieceBehaviour.AIMovePiece(turn.destination);
                 state = AI_STATES.S_IKtoPIECEGRAB;

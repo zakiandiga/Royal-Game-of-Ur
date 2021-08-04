@@ -13,7 +13,8 @@ public class DiceBehaviour : MonoBehaviour
 
     [SerializeField] private LayerMask interactableOn;
     [SerializeField] private LayerMask interactableOff;
-    [SerializeField] private LayerMask pieceLayer;
+    [SerializeField] private LayerMask playerPieceLayer;
+    [SerializeField] private LayerMask opponentPieceLayer;
 
     private float diceFallTreshold = 0.5f;
     private float resultDelay = 1.2f;
@@ -67,10 +68,12 @@ public class DiceBehaviour : MonoBehaviour
         grabCollider = GetComponentInChildren<SphereCollider>();
         particle = GetComponentInChildren<ParticleSystem>();
 
-        Physics.IgnoreLayerCollision(this.gameObject.layer, pieceLayer, true);
 
-        //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete
-        Debug.Log("Starting dice state = " + diceState);
+        //Physics.IgnoreLayerCollision(this.gameObject.layer, playerPieceLayer, true);
+        //Physics.IgnoreLayerCollision(this.gameObject.layer, opponentPieceLayer, true);
+
+
+        //grabCollider.SetActive(false); //uncomment this when the game loop/phase complete        
          
     }    
 
@@ -142,7 +145,7 @@ public class DiceBehaviour : MonoBehaviour
             diceState = DiceState.OnHand;
 
             OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
-            Debug.Log(this.gameObject.name + " ON HAND");
+            //Debug.Log(this.gameObject.name + " ON HAND");
         }        
     }
 
@@ -152,7 +155,7 @@ public class DiceBehaviour : MonoBehaviour
         {
             diceState = DiceState.Thrown;
             OnDiceStateChange?.Invoke(this.gameObject, this.diceState.ToString()); //Debug UI
-            Debug.Log("Current dice state = " + diceState);
+            //Debug.Log("Current dice state = " + diceState);
             //polishing checklist
             //add force to dice
         }
@@ -189,7 +192,7 @@ public class DiceBehaviour : MonoBehaviour
             else
             {
                 rollResult = -1;
-                Debug.Log(this.gameObject.name + " DiceCheck error");
+                //Debug.Log(this.gameObject.name + " DiceCheck error");
             }
 
             //Debug.Log(this.gameObject.name + " is thrown");
@@ -211,10 +214,10 @@ public class DiceBehaviour : MonoBehaviour
             else
             {
                 rollResult = -1;
-                Debug.Log(this.gameObject.name + " DiceCheck error");
+                //Debug.Log(this.gameObject.name + " DiceCheck error");
             }
 
-            Debug.Log(this.gameObject.name + " is thrown");
+            //Debug.Log(this.gameObject.name + " is thrown");
             
             //StartCoroutine(BoolResultDelay());
             OnDiceBoolResult?.Invoke(rollResult, aIDice);
@@ -222,7 +225,7 @@ public class DiceBehaviour : MonoBehaviour
         }
         else
         {
-            Debug.Log("Dice roll error, Dice Type not assigned");            
+            //Debug.Log("Dice roll error, Dice Type not assigned");            
         }        
     }
 

@@ -38,6 +38,7 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnPieceDropped += PieceDropHandler;
         PhaseManager.OnExitDiceRoll += DiceRollObserver;
         PhaseManager.OnPlayerDelayCheck += SquareTenantCheck;
+        AIAnimationStateMachine.OnAIPieceLocationUpdate += SquareTenantCheck;
     }
 
     private void OnDisable()
@@ -48,6 +49,7 @@ public class BoardManager : MonoBehaviour
         PieceBehaviour.OnPieceDropped -= PieceDropHandler;
         PhaseManager.OnExitDiceRoll -= DiceRollObserver;
         PhaseManager.OnPlayerDelayCheck -= SquareTenantCheck;
+        AIAnimationStateMachine.OnAIPieceLocationUpdate -= SquareTenantCheck;
     }
 
     private void DiceRollObserver(int dice)
@@ -65,134 +67,180 @@ public class BoardManager : MonoBehaviour
 
     private void CheckPlayerPieceLegalMove()
     {
-        Debug.Log("Checking pieces legal move");
+        //Debug.Log("Checking pieces legal move");
 
         int legalMoveAmount = 0;
         for (int i = 0; i < playerPieces.Count; ++i)
         {
-            int targetSquareIndex = playerPieces[i].currentSquare + diceResult;
+            int targetSquareIndex = playerPieces[i].currentSquare + diceResult;            
 
             if (targetSquareIndex > finishSquareIndex) //if the targetsquare is beyond the finish line
             {
-                Debug.Log(playerPieces[i].name + "cannot move beyond finish line");
+                //Debug.Log(playerPieces[i].name + "cannot move beyond finish line");
                 playerPieces[i].hasValidMove = false;
             }
 
-            if (targetSquareIndex <= finishSquareIndex && playerPieces[i].hasLaunched) //if the piece is on board (is launched)
+            else if (targetSquareIndex <= finishSquareIndex) //if the piece is no launched
             {
-                
+                var targetSquareTenant = playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant;
 
-                //Check if the target square doesn't have a player piece
-                if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant != SquareBehaviour.SquareTenant.White)
+                if (playerPieces[i].hasLaunched)
                 {
-                    legalMoveAmount += 1;
-                    playerPieces[i].playerTargetSquare = targetSquareIndex;
-                    playerPieces[i].hasValidMove = true;
+
+                    //Check if the target square doesn't have a player piece
+                    if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                    {
+                        legalMoveAmount += 1;
+                        playerPieces[i].playerTargetSquare = targetSquareIndex;
+                        playerPieces[i].hasValidMove = true;
+                    }
+
+                    else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                    {
+                        playerPieces[i].hasValidMove = false;
+                    }
                 }
 
-                if (playerSquare[targetSquareIndex].GetComponent<SquareBehaviour>().squareTenant == SquareBehaviour.SquareTenant.White)
+                else if(!playerPieces[i].hasLaunched)
                 {
-                    playerPieces[i].hasValidMove = false;
-                }
+                    int currentPiece = i;
+
+                    //rule of launching piece to the board
+                    switch (currentPiece)
+                    {
+                        case 0:
+                            if (targetSquareIndex == 2 || targetSquareIndex == 4)
+                            {
+                                if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                                {
+                                    legalMoveAmount += 1;
+                                    playerPieces[i].playerTargetSquare = targetSquareIndex;
+                                    playerPieces[i].hasValidMove = true;
+                                    playerPieces[i].hasLaunched = true;
+                                    //Debug.Log("Player Swallow can move");
+                                }
+                                else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                                {
+                                    playerPieces[i].hasValidMove = false;
+                                }
+
+                            }
+                            else
+                            {
+                                playerPieces[i].hasValidMove = false;
+                            }
+                            break;
+                        case 1:
+                            if (targetSquareIndex == 5)
+                            {
+                                if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                                {
+                                    legalMoveAmount += 1;
+                                    playerPieces[i].playerTargetSquare = targetSquareIndex;
+                                    playerPieces[i].hasValidMove = true;
+                                    playerPieces[i].hasLaunched = true;
+                                    //Debug.Log("Player Stormbird can move");
+                                }
+                                else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                                {
+                                    playerPieces[i].hasValidMove = false;
+                                }
+                            }
+                            else
+                            {
+                                playerPieces[i].hasValidMove = false;
+                            }
+                            break;
+                        case 2:
+                            if (targetSquareIndex == 6)
+                            {
+                                if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                                {
+                                    legalMoveAmount += 1;
+                                    playerPieces[i].playerTargetSquare = targetSquareIndex;
+                                    playerPieces[i].hasValidMove = true;
+                                    playerPieces[i].hasLaunched = true;
+                                    //Debug.Log("Player Raven can move");
+                                }
+                                else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                                {
+                                    playerPieces[i].hasValidMove = false;
+                                }
+                            }
+                            else
+                            {
+                                playerPieces[i].hasValidMove = false;
+                            }
+                            break;
+                        case 3:
+                            if (targetSquareIndex == 7)
+                            {
+                                if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                                {
+                                    legalMoveAmount += 1;
+                                    playerPieces[i].playerTargetSquare = targetSquareIndex;
+                                    playerPieces[i].hasValidMove = true;
+                                    playerPieces[i].hasLaunched = true;
+                                    //Debug.Log("Player Rooster can move");
+                                }
+                                else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                                {
+                                    playerPieces[i].hasValidMove = false;
+                                }
+                            }
+                            else
+                            {
+                                playerPieces[i].hasValidMove = false;
+                            }
+                            break;
+                        case 4:
+                            if (targetSquareIndex == 10)
+                            {
+                                if (targetSquareTenant != SquareBehaviour.SquareTenant.White)
+                                {
+                                    legalMoveAmount += 1;
+                                    playerPieces[i].playerTargetSquare = targetSquareIndex;
+                                    playerPieces[i].hasValidMove = true;
+                                    playerPieces[i].hasLaunched = true;
+                                    //Debug.Log("Player Eagle can move");
+                                }
+                                else if (targetSquareTenant == SquareBehaviour.SquareTenant.White)
+                                {
+                                    playerPieces[i].hasValidMove = false;
+                                }
+                            }
+                            else
+                            {
+                                playerPieces[i].hasValidMove = false;
+                            }
+                            break;
+                    }
+                }                
             }
-
-            else if (targetSquareIndex <= finishSquareIndex && !playerPieces[i].hasLaunched) //if the piece is no launched
-            {
-                int currentPiece = i;
-
-                //rule of launching piece to the board
-                switch (currentPiece) 
-                {
-                    case 0:
-                        if (targetSquareIndex == 2 || targetSquareIndex == 4)
-                        {
-                            legalMoveAmount += 1;
-                            playerPieces[i].playerTargetSquare = targetSquareIndex;
-                            playerPieces[i].hasValidMove = true;
-                            playerPieces[i].hasLaunched = true;
-                            Debug.Log("Player Swallow can move");
-                        }
-                        else
-                        {
-                            playerPieces[i].hasValidMove = false;
-                        }
-                        break;
-                    case 1:
-                        if (targetSquareIndex == 5)
-                        {
-                            legalMoveAmount += 1;
-                            playerPieces[i].playerTargetSquare = targetSquareIndex;
-                            playerPieces[i].hasValidMove = true;
-                            playerPieces[i].hasLaunched = true;
-                            Debug.Log("Player Stormbird can move");
-                        }
-                        else
-                        {
-                            playerPieces[i].hasValidMove = false;
-                        }
-                        break;
-                    case 2:
-                        if (targetSquareIndex == 6)
-                        {
-                            legalMoveAmount += 1;
-                            playerPieces[i].playerTargetSquare = targetSquareIndex;
-                            playerPieces[i].hasValidMove = true;
-                            playerPieces[i].hasLaunched = true;
-                            Debug.Log("Player Raven can move");
-                        }
-                        else
-                        {
-                            playerPieces[i].hasValidMove = false;
-                        }
-                        break;
-                    case 3:
-                        if (targetSquareIndex == 7)
-                        {
-                            legalMoveAmount += 1;
-                            playerPieces[i].playerTargetSquare = targetSquareIndex;
-                            playerPieces[i].hasValidMove = true;
-                            playerPieces[i].hasLaunched = true;
-                            Debug.Log("Player Rooster can move");
-                        }
-                        else
-                        {
-                            playerPieces[i].hasValidMove = false;
-                        }
-                        break;
-                    case 4:
-                        if (targetSquareIndex == 10)
-                        {
-                            legalMoveAmount += 1;
-                            playerPieces[i].playerTargetSquare = targetSquareIndex;
-                            playerPieces[i].hasValidMove = true;
-                            playerPieces[i].hasLaunched = true;
-                            Debug.Log("Player Eagle can move");
-                        }
-                        else
-                        {
-                            playerPieces[i].hasValidMove = false;
-                        }
-                        break;
-
-                }
-            }
-
         }
+
+        LegalMoveAmountVerified(legalMoveAmount);
+        
+    }
+
+    private void LegalMoveAmountVerified(int amount)
+    {
+        int legalMoveAmount = amount;
 
         if (legalMoveAmount <= 0)
         {
             //tell piece behaviour that there is no legal move, skip state to PieceState.Dropped
             OnLegalMoveAvailable?.Invoke(legalMoveAmount);
             //tell UI to display 'No legal move available' info
-            OnDebugText?.Invoke("No legal move available");
+            //OnDebugText?.Invoke("No legal move available");
         }
 
-        if(legalMoveAmount > 0)
+        else if (legalMoveAmount > 0)
         {
             //tell piece behaviour that there is legal move, proceed state to PieceState.Ready
             OnLegalMoveAvailable?.Invoke(legalMoveAmount);
-            Debug.Log("legal move amount = " + legalMoveAmount.ToString());
-            OnDebugText?.Invoke("Legal move = " + legalMoveAmount.ToString());
+            //Debug.Log("legal move amount = " + legalMoveAmount.ToString());
+            //OnDebugText?.Invoke("Legal move = " + legalMoveAmount.ToString());
 
         }
     }
@@ -296,17 +344,12 @@ public class BoardManager : MonoBehaviour
         var squareTenant = aISquare[targetSquare].GetComponent<SquareBehaviour>().squareTenant;
         bool isRosette = aISquare[targetSquare].GetComponent<SquareBehaviour>().isRosette;
         bool isFinish = aISquare[targetSquare].GetComponent<SquareBehaviour>().isFinish;
-        bool isKicking;
-
-        Debug.Log("targetSquare: " + targetSquare);
-        Debug.Log("squareTenant: " + squareTenant);
-        Debug.Log("isRosette: " + isRosette);
-        Debug.Log("isFinish: " + isFinish);
+        bool isKicking;        
         
         if (squareTenant == SquareBehaviour.SquareTenant.White)
         {
             isKicking = true;
-            Debug.Log("BoardManager: AI isKicking = " + isKicking);
+            //Debug.Log("BoardManager: AI isKicking = " + isKicking);
             OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
             //this event is being subscribed by the piece during DropPiece(), 
             //and is being unsubscribe during FinalizePieceDrop()
@@ -314,7 +357,7 @@ public class BoardManager : MonoBehaviour
         else if (squareTenant == SquareBehaviour.SquareTenant.Empty)
         {
             isKicking = false;
-            Debug.Log("BoardManager: AI isKicking = " + isKicking);
+            //Debug.Log("BoardManager: AI isKicking = " + isKicking);
             OnPieceDropHandlerDone?.Invoke(isRosette, isKicking, isFinish);
         }
     }
@@ -323,7 +366,8 @@ public class BoardManager : MonoBehaviour
     {
         for (int i = 0; i < playerSquare.Count; ++i)
         {
-            playerSquare[i].GetComponent<SquareBehaviour>().CheckTenant();
+            var checkedSquare = playerSquare[i].GetComponent<SquareBehaviour>();
+            checkedSquare.CheckTenant();
         }
     }
 }
