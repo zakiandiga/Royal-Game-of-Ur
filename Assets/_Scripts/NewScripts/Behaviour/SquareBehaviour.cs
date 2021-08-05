@@ -55,20 +55,20 @@ public class SquareBehaviour : MonoBehaviour
         {
             if(hit.collider.gameObject.layer == playerPieceLayerInt) //29 = PlayerPiece layer
             {
-                Debug.Log(this.gameObject.name + " square occupied by a WHITE piece");
+                //Debug.Log(this.gameObject.name + " square occupied by a WHITE piece");
                 squareTenant = SquareTenant.White;
             }                
 
             if(hit.collider.gameObject.layer == opponentPieceLayerInt) //30 = AI piece layer
             {
-                Debug.Log(this.gameObject.name + " square occupied by a BLACK piece");
+                //Debug.Log(this.gameObject.name + " square occupied by a BLACK piece");
                 squareTenant = SquareTenant.Black;
             }
                               
         }        
         else
         {
-            Debug.Log(this.gameObject.name + " square is empty");
+            //Debug.Log(this.gameObject.name + " square is empty");
             squareTenant = SquareTenant.Empty;
         }            
     }
