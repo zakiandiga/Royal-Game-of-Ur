@@ -13,15 +13,6 @@ public class MenuController : MonoBehaviour
         crossFade.SetTrigger("FadeIn");
     }
 
-    private void OnEnable()
-    {
-        PhaseManager.OnGameEnd += LoadEnd;
-    }
-
-    private void OnDisable()
-    {
-        PhaseManager.OnGameEnd -= LoadEnd;
-    }
 
     public void StartGame()
     {
@@ -40,26 +31,4 @@ public class MenuController : MonoBehaviour
         yield return new WaitForSeconds(crossFadeTime);
         SceneManager.LoadScene("main");
     }
-
-    private void LoadEnd(bool playerWin)
-    {
-        StartCoroutine(TransitionToEnd(playerWin));
-    }
-
-    private IEnumerator TransitionToEnd(bool playerWin)
-    {
-        crossFade.SetTrigger("FadeOut");
-
-        yield return new WaitForSeconds(crossFadeTime);
-
-        if(playerWin)
-        {
-            //Load player win screen
-        }
-        else if(!playerWin)
-        {
-            //Load player lose screen
-        }
-    }
-
 }

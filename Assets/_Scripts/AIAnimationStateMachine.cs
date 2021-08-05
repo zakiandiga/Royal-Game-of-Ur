@@ -226,7 +226,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     private IEnumerator BoolDiceRollDelay()
     {
-        Debug.Log("AI: BoolDiceRollDelay() STARTED");
+        //Debug.Log("AI: BoolDiceRollDelay() STARTED");
         float resultDelay = 1.2f;
 
         yield return new WaitForSeconds(resultDelay);
@@ -295,7 +295,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
     #region PiecePositionChecks
     private void PiecesLocationUpdate()
     {
-        Debug.Log("PIECE LOCATION UPDATE");
+        //Debug.Log("PIECE LOCATION UPDATE");
         OnAIPieceLocationUpdate?.Invoke("AI");
         for (int i = 0; i<boardpieces.Length; i++)
         {
@@ -311,7 +311,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
             if (boardpieces[i].gameObject == kickedPiece) //if it's the same one with the kickedPiece
             {
                 pieces[i] = 0; //reset its int representation to the starting position
-                Debug.Log("AI: RESET POSITION OF KICKED" + kickedPiece + " (piece number " + i +") to its starting position");
+                //Debug.Log("AI: RESET POSITION OF KICKED" + kickedPiece + " (piece number " + i +") to its starting position");
 
             }
         }
@@ -515,7 +515,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
             #region stateCalculateTurn
             case AI_STATES.S_CALCULATETURN:
-                Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
+                //Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
                 rollingdie = false;
 
                 //turn = ai.NextMove(board, rollDie(), depth);

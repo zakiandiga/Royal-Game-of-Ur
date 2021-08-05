@@ -203,7 +203,7 @@ public class PhaseManager : MonoBehaviour
                 Debug.Log("PLAYER WIN");
                 //OnDebugText?.Invoke("Player WIN!!");
 
-                OnGameEnd?.Invoke(true);
+                OnGameEnd?.Invoke(true); //Listen to this event to make a Winning event
                 worldState = WorldState.playerWin;
 
                 //Win event
@@ -226,9 +226,9 @@ public class PhaseManager : MonoBehaviour
             if(currentAIFinishedPiece >= maxAIFinishedPiece)
             {
                 Debug.Log("AI WIN");
-                OnDebugText?.Invoke("Player LOSE!!");
+                //OnDebugText?.Invoke("Player LOSE!!"); 
 
-                OnGameEnd?.Invoke(false);
+                OnGameEnd?.Invoke(false);  //Listen to this event to make a Losing event
                 worldState = WorldState.aiWin;
 
                 //Lose event

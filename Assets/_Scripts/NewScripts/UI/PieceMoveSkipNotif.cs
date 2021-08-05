@@ -23,6 +23,7 @@ public class PieceMoveSkipNotif : MonoBehaviour
     private void OnDisable()
     {
         PhaseManager.OnPlayerSkipPiece -= DisplayNotification;
+        AIAnimationStateMachine.AI_TurnFinished -= DisplayNotification;
     }
 
     private void DisplayNotification (string msg)
