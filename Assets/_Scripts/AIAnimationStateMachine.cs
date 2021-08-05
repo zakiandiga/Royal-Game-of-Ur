@@ -6,7 +6,10 @@ using UnityEngine;
 public class AIAnimationStateMachine : MonoBehaviour {
 
     public static event Action<string> AI_TurnFinished;
+    public static event Action<string> OnAIPieceLocationUpdate;
     public static event Action<string> OnDiceThrownAI;
+    public static event Action<int> OnAIDiceResultChecked;
+    public static event Action<string> OnAIDiceResultResetted;
     public static event Action<string> OnPieceDropAI;
  
     public AI_STATES state;
@@ -17,7 +20,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
     private AIScript.AI ai;
     AIScript.AI.Move turn;
     [Tooltip("Difficulty: Easiest (1) -> Hardest (inf)")]
-    public int depth = 1;
+    public int depth = 2;
     int currentTargetPiece;  //Zak: change the name from aipiece;
 
     public GameObject playercam;
@@ -223,7 +226,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
     private IEnumerator BoolDiceRollDelay()
     {
-        Debug.Log("AI: BoolDiceRollDelay() STARTED");
+        //Debug.Log("AI: BoolDiceRollDelay() STARTED");
         float resultDelay = 1.2f;
 
         yield return new WaitForSeconds(resultDelay);
@@ -285,12 +288,15 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
         numDiceRolled = false;
         boolDiceRolled = false;
+
+        OnAIDiceResultResetted?.Invoke("AI dice reset");
     }
     #endregion
     #region PiecePositionChecks
     private void PiecesLocationUpdate()
     {
-        Debug.Log("PIECE LOCATION UPDATE");
+        //Debug.Log("PIECE LOCATION UPDATE");
+        OnAIPieceLocationUpdate?.Invoke("AI");
         for (int i = 0; i<boardpieces.Length; i++)
         {
             pieces[i] = boardpieces[i].gameObject.GetComponent<PieceBehaviour>().currentSquare;
@@ -305,7 +311,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
             if (boardpieces[i].gameObject == kickedPiece) //if it's the same one with the kickedPiece
             {
                 pieces[i] = 0; //reset its int representation to the starting position
-                Debug.Log("AI: RESET POSITION OF KICKED" + kickedPiece + " (piece number " + i +") to its starting position");
+                //Debug.Log("AI: RESET POSITION OF KICKED" + kickedPiece + " (piece number " + i +") to its starting position");
 
             }
         }
@@ -365,10 +371,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 {
                     currentPieceBehaviour = null;
                 }
-                if(currentRigidBody != null)
-                {
-                    currentRigidBody = null;
-                }
+                
 
                 lookdestination = playercam.transform.position;
                 look_lerpspeed = 5f;
@@ -503,6 +506,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
                     if (totalDiceResult > 0)
                     {
                         Debug.Log("AI: Dice Result CHECKED, Result = " + totalDiceResult);
+                        OnAIDiceResultChecked?.Invoke(totalDiceResult);
                         state = AI_STATES.S_CALCULATETURN;
                     }
                 }
@@ -511,7 +515,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
             #region stateCalculateTurn
             case AI_STATES.S_CALCULATETURN:
-                Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
+                //Debug.Log("AI Calculating turn!"); //STATE MONITOR -Zak
                 rollingdie = false;
 
                 //turn = ai.NextMove(board, rollDie(), depth);
@@ -529,7 +533,7 @@ public class AIAnimationStateMachine : MonoBehaviour {
 
                     ResetDiceResult();
 
-                    AI_TurnFinished?.Invoke("Move Unavailable"); //Notify PhaseManager to switch to player turn
+                    AI_TurnFinished?.Invoke("AI skip"); //Notify PhaseManager to switch to player turn
                     break;
                 }
                 aiboolLight.SetActive(true);
@@ -730,13 +734,9 @@ public class AIAnimationStateMachine : MonoBehaviour {
                 //Define the current turn's target piece GameObject based on the latest currentTargetPiece
                 currentTargetPieceGameObject = boardpieces[currentTargetPiece].gameObject;
                 currentPieceBehaviour = currentTargetPieceGameObject.GetComponent<PieceBehaviour>(); //and its PieceBehaviour component
-                currentRigidBody = currentTargetPieceGameObject.GetComponent<Rigidbody>(); //and its RigidBody  
+                
 
-                Debug.Log("currentTargetPiece = " + currentTargetPiece);
-                Debug.Log("AI: Going to move " + boardpieces[currentTargetPiece].gameObject.name);
-                Debug.Log("AI PieceBehaviour: " + boardpieces[currentTargetPiece].gameObject.GetComponent<PieceBehaviour>().gameObject.name);
-                Debug.Log("AI currentPieceBehaviour " + currentPieceBehaviour.gameObject.name);
-                Debug.Log("AI: destination = " + turn.destination);
+
                 //currentRigidBody.isKinematic = true;
                 currentPieceBehaviour.AIMovePiece(turn.destination);
                 state = AI_STATES.S_IKtoPIECEGRAB;

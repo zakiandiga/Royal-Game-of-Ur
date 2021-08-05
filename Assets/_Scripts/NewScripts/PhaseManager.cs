@@ -14,8 +14,8 @@ public class PhaseManager : MonoBehaviour
     [SerializeField] private PlayerState playerState = PlayerState.Delay; //Temporary for Dice Debug
     public enum PlayerState
     {
-        Delay, //Cleanup value before turn start
         Waiting, //Waiting during AI turn, can't interact with object
+        Delay, //Cleanup value before turn start        
         DiceRoll, //Player can roll both dices
         PieceMove, //Player can move piece (if theres any possible move), update score if any
     }
@@ -41,8 +41,10 @@ public class PhaseManager : MonoBehaviour
     public static event Action<PhaseManager> OnEnterDiceRoll;
     public static event Action<int> OnExitDiceRoll;
     public static event Action<PhaseManager> OnEnterPieceMove;
-    public static event Action<PhaseManager> OnExitPieceMove;
+    public static event Action<string> OnPlayerSkipPiece;
+    public static event Action<string> OnExitPieceMove;
     public static event Action<PhaseManager> OnAITurnStart;
+    public static event Action<bool> OnGameEnd;
 
     public static event Action<string> OnDebugText;
     #endregion
@@ -58,7 +60,7 @@ public class PhaseManager : MonoBehaviour
     void Start()
     {
         //Testing
-        worldState = WorldState.playerTurn;
+        worldState = WorldState.startingGame;
     }
 
     private void OnEnable()
@@ -69,6 +71,7 @@ public class PhaseManager : MonoBehaviour
         PieceBehaviour.OnPieceFinish += PieceFinishCheck;
         BoardManager.OnLegalMoveAvailable += PlayerSkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished += SwitchToPlayerTurn;
+        WalkingtoIdleTrigger.OnOpponentReady += InitiatingFirstTurn;
 
         switchPlayer.action.Enable(); //TEMP
     }
@@ -82,17 +85,24 @@ public class PhaseManager : MonoBehaviour
         PieceBehaviour.OnPieceFinish -= PieceFinishCheck;
         BoardManager.OnLegalMoveAvailable -= PlayerSkipPieceMove;
         AIAnimationStateMachine.AI_TurnFinished -= SwitchToPlayerTurn;
+        WalkingtoIdleTrigger.OnOpponentReady -= InitiatingFirstTurn;
 
         switchPlayer.action.Disable(); //TEMP
     }
     #endregion
+
+    private void InitiatingFirstTurn(int numCode)
+    {
+        //Currently player will play white piece and take the first turn by default
+        worldState = WorldState.playerTurn;
+    }
 
     #region PlayerDiceResultObserver
     private void DiceNumberResultCheck(int numResult, bool aIDice)
     {
         if(!aIDice)
         {
-            Debug.Log("Recieve dice number result from DiceBehaviour, value: " + numResult);
+            //Debug.Log("Recieve dice number result from DiceBehaviour, value: " + numResult);
             numberDiceResult = numResult;
             //Display on the UI?
             numberDiceThrown = true;
@@ -104,7 +114,7 @@ public class PhaseManager : MonoBehaviour
     {
         if(!aIDice)
         {
-            Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + boolResult);
+            //Debug.Log("Recieve dice bool result from DiceBehaviour, value: " + boolResult);
             boolDiceResult = boolResult;
             //Display on the UI?
             boolDiceThrown = true;
@@ -123,8 +133,8 @@ public class PhaseManager : MonoBehaviour
                 totalDiceResult = numberDiceResult + 4;
             else if (numberDiceResult == 4)
                 totalDiceResult = 10;
-        }
-        Debug.Log("Total Dice result = " + totalDiceResult);
+        }        
+        //Debug.Log("Total Dice result = " + totalDiceResult);
     }
     #endregion
 
@@ -132,12 +142,23 @@ public class PhaseManager : MonoBehaviour
     {
         if(playerLegalMoveAmount <= 0)
         {
-            playerState = PlayerState.Waiting;
-            worldState = WorldState.aiTurn;
-
-            OnExitPieceMove?.Invoke(this);
-            OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+            OnPlayerSkipPiece?.Invoke("player skip");
+            StartCoroutine(PlayerSkipMoveDelay());
         }
+    }
+
+    private IEnumerator PlayerSkipMoveDelay()
+    {
+        float delay = 3f;
+        yield return new WaitForSeconds(delay);
+
+        playerState = PlayerState.Waiting;
+        worldState = WorldState.aiTurn;
+
+        OnExitPieceMove?.Invoke("player skip");
+        OnPhaseChange?.Invoke(playerState.ToString()); //for UI
+
+
     }
 
     private void PieceDropCheck(bool legalDrop, bool isRosette, bool isPlayerPiece)
@@ -151,7 +172,7 @@ public class PhaseManager : MonoBehaviour
                     playerState = PlayerState.Waiting;
                     worldState = WorldState.aiTurn;
 
-                    OnExitPieceMove?.Invoke(this);
+                    OnExitPieceMove?.Invoke("player dropped piece");
                     OnPhaseChange?.Invoke(playerState.ToString()); //for UI
                 }
 
@@ -159,7 +180,7 @@ public class PhaseManager : MonoBehaviour
                 {
                     playerState = PlayerState.Delay;
 
-                    OnExitPieceMove?.Invoke(this);
+                    OnExitPieceMove?.Invoke("player rosette");
                     OnPhaseChange?.Invoke(playerState.ToString()); //for UI
                 }
             }
@@ -170,7 +191,7 @@ public class PhaseManager : MonoBehaviour
 
     private void PieceFinishCheck(GameObject piece, bool playerPiece)
     {
-        OnDebugText?.Invoke(piece.gameObject.name + " just land on the finish square");
+        //OnDebugText?.Invoke(piece.gameObject.name + " just land on the finish square");
         //playerFinishedPieces.Add(piece.gameObject);
 
         if(playerPiece)
@@ -180,7 +201,9 @@ public class PhaseManager : MonoBehaviour
             if (currentPlayerFinishedPiece >= maxPlayerFinishedPiece)
             {
                 Debug.Log("PLAYER WIN");
-                OnDebugText?.Invoke("Player WIN!!");
+                //OnDebugText?.Invoke("Player WIN!!");
+
+                OnGameEnd?.Invoke(true); //Listen to this event to make a Winning event
                 worldState = WorldState.playerWin;
 
                 //Win event
@@ -191,19 +214,21 @@ public class PhaseManager : MonoBehaviour
                 playerState = PlayerState.Waiting;
                 worldState = WorldState.aiTurn;
 
-                OnExitPieceMove?.Invoke(this);
+                OnExitPieceMove?.Invoke("player finishing piece");
                 OnPhaseChange?.Invoke(playerState.ToString());
             }
         }
 
-        if(!playerPiece) //if AI piece's land on finish
+        else if(!playerPiece) //if AI piece's land on finish
         {
             currentAIFinishedPiece += 1;
 
             if(currentAIFinishedPiece >= maxAIFinishedPiece)
             {
                 Debug.Log("AI WIN");
-                OnDebugText?.Invoke("Player LOSE!!");
+                //OnDebugText?.Invoke("Player LOSE!!"); 
+
+                OnGameEnd?.Invoke(false);  //Listen to this event to make a Losing event
                 worldState = WorldState.aiWin;
 
                 //Lose event
@@ -269,7 +294,7 @@ public class PhaseManager : MonoBehaviour
                     playerState = PlayerState.PieceMove;
                     OnExitDiceRoll?.Invoke(totalDiceResult);
                     OnPhaseChange?.Invoke(playerState.ToString());
-                    Debug.Log("Player state now = " + playerState);
+                    //Debug.Log("Player state now = " + playerState);
                 }
                 break;
 
@@ -280,8 +305,7 @@ public class PhaseManager : MonoBehaviour
                 break;
 
             case PlayerState.Waiting:
-                //wait until AI/Other player finish their turn
-
+                //wait until AI/Other player finish their turn                
 
                 if(worldState == WorldState.playerTurn) //Exiting PlayerState.Waiting
                 {

@@ -58,11 +58,31 @@ namespace AIScript
         {
             switch (piece)
             {
+                #region Old CanBreakout() rules
+                /* Old piece breakout cases
                 case 1: //swallow
                     //swallow re-entry special case
                     return (!launched[0] && destination == 4) || (launched[0] && (
                         destination == 3 || destination == 7 || destination == 13
                         ));
+                case 2: //storm-bird
+                    return destination == 5 || launched[1];
+                case 3: //raven
+                    return destination == 6 || launched[2];
+                case 4: //rooster
+                    return destination == 7 || launched[3];
+                case 5: //eagle
+                    return destination == 10 || launched[4];
+                */
+                #endregion
+
+                //Zak's Modification
+                case 1: //swallow 
+                        //add destination 2 as a !launched[0] true condition
+                        //remove destination 3, 7, 13 as launched[0] true condition
+                    return (!launched[0] && destination == 4) ||
+                        (!launched[0] && destination == 2) ||
+                        launched[0];
                 case 2: //storm-bird
                     return destination == 5 || launched[1];
                 case 3: //raven
@@ -78,7 +98,8 @@ namespace AIScript
         //does the destination match a rosette on the board?
         private bool IsSafe(int position)
         {
-            return position == 4 || position == 8 || position == 14 || position == 15;
+            //return position == 4 || position == 8 || position == 14 || position == 15;
+            return position == 4 || position == 15;
         }
 
         //is there a white or black piece on the board at that destination?
@@ -309,6 +330,7 @@ namespace AIScript
             Node root = new Node(new Move(0, 0));
 
             //if a modified roll is provided, considers an unmodified roll as well
+            //Need clarification: can we move with unmodified result when bool dice result is true?
             if (roll >= 5)
             {
                 //convert total dice result to base number-dice result
@@ -329,20 +351,20 @@ namespace AIScript
                 }
                 else if (board[5] != 0)
                 {
-                    if (CanMove(board, 1, board[5] + tempRoll, false))
+                    if (CanMove(board, 1, board[5] + roll, false)) //change tempRoll to roll
                     {
-                        int[] nextBoard = MakeMove(board, 1, board[5] + tempRoll, false);
-                        Move nextMove = new Move(1, board[5] + tempRoll);
+                        int[] nextBoard = MakeMove(board, 1, board[5] + roll, false); //change tempRoll to roll
+                        Move nextMove = new Move(1, board[5] + roll); //change tempRoll to roll
                         root.children.Add(BuildTree(nextBoard, depth - 1, true, nextMove));
                     }
                 }
                 //generate all possible piece combinations given dice roll
                 foreach (int p in pieces)
                 {
-                    if (CanMove(board, p, board[p + 4] + tempRoll, false))
+                    if (CanMove(board, p, board[p + 4] + roll, false)) //change tempRoll to roll
                     {
-                        int[] nextBoard = MakeMove(board, p, board[p + 4] + tempRoll, false);
-                        Move nextMove = new Move(p, board[p + 4] + tempRoll);
+                        int[] nextBoard = MakeMove(board, p, board[p + 4] + roll, false); //change tempRoll to roll
+                        Move nextMove = new Move(p, board[p + 4] + roll); //change tempRoll to roll
                         root.children.Add(BuildTree(nextBoard, depth - 1, true, nextMove));
                     }
                 }

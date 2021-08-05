@@ -49,9 +49,9 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - AIPieces
   - PlayerPieces
+  - AIPieces
+  - 
   m_SortingLayers:
   - name: Default
     uniqueID: 0

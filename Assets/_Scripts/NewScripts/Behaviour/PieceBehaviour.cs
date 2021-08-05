@@ -12,6 +12,7 @@ public class PieceBehaviour : MonoBehaviour
     private Rigidbody rb;
     private BoxCollider pieceCollider;
     private SphereCollider grabCollider;
+    private ParticleSystem particle;
     [SerializeField] private LayerMask interactableOn;
     [SerializeField] private LayerMask interactableOff;
 
@@ -33,6 +34,7 @@ public class PieceBehaviour : MonoBehaviour
     private bool onStartingSpot = true;
     private bool onFinishSpot = false;
     private int diceResult;
+    public bool hasLaunched = false;
 
     //private List<int> squareIndexes;
     public int currentSquare = 0;
@@ -102,6 +104,9 @@ public class PieceBehaviour : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pieceCollider = GetComponent<BoxCollider>();
         grabCollider = GetComponentInChildren<SphereCollider>();
+
+        particle = GetComponentInChildren<ParticleSystem>();
+ 
      
         currentPosition = startSpawner.position;
         defaultRotation = transform.rotation;
@@ -381,7 +386,7 @@ public class PieceBehaviour : MonoBehaviour
             //assume AI piecedrop always legal (handled by AI script)
             isPlayerPiece = false;
             legalDrop = true; //legalDrop from AI always true
-            //this.rb.isKinematic = false;
+            this.rb.isKinematic = false;
             BoardManager.OnPieceDropHandlerDone += FinalizePieceDrop;
             OnPieceDropped?.Invoke(legalDrop, aiTargetSquare, isPlayerPiece);
         }
@@ -533,7 +538,7 @@ public class PieceBehaviour : MonoBehaviour
             
     }
 
-    private void PieceMoveConfirmed(PhaseManager phase)
+    private void PieceMoveConfirmed(string phase)
     {
         PhaseManager.OnExitPieceMove -= PieceMoveConfirmed;
 
@@ -574,6 +579,11 @@ public class PieceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
+
+                if (particle.isEmitting)
+                {
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 break;
 
             case PieceState.Ready:
@@ -583,10 +593,21 @@ public class PieceBehaviour : MonoBehaviour
                     {
                         grabControl.interactionLayerMask = interactableOn;
                     }
+                    
+                    if(!particle.isEmitting)
+                    {
+                        Debug.Log(particle.isPlaying + ": playing particle");
+                        particle.Play();
+                    }
                 }
                 break;
 
-            case PieceState.OnHand:                
+            case PieceState.OnHand:
+                if (particle.isEmitting)
+                {
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+
                 BoardCheckRaycast();                
                 break;
 
@@ -595,9 +616,18 @@ public class PieceBehaviour : MonoBehaviour
                 {
                     grabControl.interactionLayerMask = interactableOff;
                 }
+                if (particle.isEmitting)
+                {
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
                 break;
 
             case PieceState.AIMoving:
+                if (particle.isEmitting)
+                {
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+                }
+
                 BoardCheckRaycast();
                 break;
 
@@ -608,6 +638,11 @@ public class PieceBehaviour : MonoBehaviour
                     {
                         grabControl.interactionLayerMask = interactableOff;
                     }
+                }
+
+                if (particle.isEmitting)
+                {
+                    particle.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
                 }
                 break;
         }

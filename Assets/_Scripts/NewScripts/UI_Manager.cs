@@ -31,6 +31,14 @@ public class UI_Manager : MonoBehaviour
         PieceBehaviour.OnPieceStateCheck += PieceStateUpdate;
     }
 
+    private void OnDisable()
+    {
+        PhaseManager.OnPhaseChange -= PhaseUpdate;
+        PhaseManager.OnExitDiceRoll -= NewDiceResult;
+
+        PieceBehaviour.OnPieceStateCheck -= PieceStateUpdate;
+    }
+
     private void PhaseUpdate(string phaseChange)
     {
         string currentPhase = phaseChange.ToString();
@@ -49,9 +57,4 @@ public class UI_Manager : MonoBehaviour
         pieceStateText.text = "Piece State: " + piece.name + " " + pieceState;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

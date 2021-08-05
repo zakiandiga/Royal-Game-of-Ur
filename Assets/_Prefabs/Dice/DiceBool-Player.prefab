@@ -148,7 +148,7 @@ Transform:
   m_GameObject: {fileID: 306500563720611329}
   m_LocalRotation: {x: -0.1702963, y: 0.25907165, z: 0.87335455, w: 0.37567678}
   m_LocalPosition: {x: 1.0141, y: 0.4956, z: 2.3954}
-  m_LocalScale: {x: 1.2500007, y: 1.2500002, z: 1.2499999}
+  m_LocalScale: {x: 1.25, y: 1.2500004, z: 1.2500001}
   m_Children:
   - {fileID: 306500565661984420}
   - {fileID: 306500565142268681}
@@ -156,6 +156,7 @@ Transform:
   - {fileID: 306500563600736777}
   - {fileID: 1784535139}
   - {fileID: 1777563163}
+  - {fileID: 1162117158835199086}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -144.516, y: 172.747, z: -44.2269}
@@ -230,7 +231,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0.02
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -249,17 +250,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawner: {fileID: 0}
+  interactableOn:
+    serializedVersion: 2
+    m_Bits: 2048
+  interactableOff:
+    serializedVersion: 2
+    m_Bits: 0
   diceType: 1
   side1: {fileID: 306500565661984420}
   side2: {fileID: 306500565142268681}
   side3: {fileID: 306500565280373044}
   side4: {fileID: 306500563600736777}
-  checkRadius: 0.003
+  checkRadius: 0.006
   altarMask:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 82176
   interactable: 0
   diceState: 0
+  aIDice: 1
 --- !u!114 &306500564122121861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -428,3 +436,78 @@ Transform:
   m_Father: {fileID: 306500563720321569}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1333895597082088702
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 306500563720321569}
+    m_Modifications:
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 189812662871199080, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+        type: 3}
+      propertyPath: m_Name
+      value: InteractableParticle
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0, type: 3}
+--- !u!4 &1162117158835199086 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 189812662870935696, guid: 5e160df3ce2d8ab4ba31a8696e1e80d0,
+    type: 3}
+  m_PrefabInstance: {fileID: 1333895597082088702}
+  m_PrefabAsset: {fileID: 0}
